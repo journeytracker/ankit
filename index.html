@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's Crack It | 4-Year B.Tech Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1; --primary-light: #818cf8; --primary-dark: #4f46e5;
+            --secondary: #10b981; --secondary-light: #34d399;
+            --accent: #f59e0b; --accent-light: #fbbf24;
+            --danger: #ef4444; --info: #3b82f6;
+            --bg-primary: #000000; --bg-secondary: #0a0a0f;
+            --bg-card: rgba(255,255,255,0.03); --bg-card-hover: rgba(255,255,255,0.06);
+            --text-primary: #ffffff; --text-secondary: rgba(255,255,255,0.7); --text-muted: rgba(255,255,255,0.4);
+            --border-color: rgba(255,255,255,0.08); --border-hover: rgba(255,255,255,0.15);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 8px 30px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.5); --shadow-glow: 0 0 40px rgba(99,102,241,0.3);
+        }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .bg-animation::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 20% 50%, rgba(99,102,241,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(16,185,129,0.06) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(245,158,11,0.05) 0%, transparent 50%); animation: bgFloat 20s ease-in-out infinite; }
+        @keyframes bgFloat { 0%,100% { transform: translate(0,0) rotate(0deg); } 33% { transform: translate(30px,-30px) rotate(5deg); } 66% { transform: translate(-20px,20px) rotate(-5deg); } }
+        .grid-pattern { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%); }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg-primary); } ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+        /* Navbar */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1rem 2rem; backdrop-filter: blur(20px); background: rgba(0,0,0,0.7); border-bottom: 1px solid var(--border-color); transition: all 0.3s ease; }
+        .navbar.scrolled { padding: 0.75rem 2rem; background: rgba(0,0,0,0.9); }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-primary); }
+        .logo-icon { width: 42px; height: 42px; background: var(--gradient-1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--shadow-glow); }
+        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .logo-text span { color: var(--primary-light); }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-stats { display: flex; gap: 24px; }
+        .nav-stat { text-align: center; padding: 8px 16px; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); }
+        .nav-stat-value { font-size: 18px; font-weight: 700; color: var(--primary-light); font-family: 'Space Grotesk', sans-serif; }
+        .nav-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .nav-actions { display: flex; gap: 8px; }
+        .nav-action-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+        .nav-action-btn:hover { border-color: var(--primary); color: var(--primary-light); background: rgba(99,102,241,0.1); }
+
+        /* Main */
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 120px 2rem 4rem; }
+        
+        /* Hero */
+        .hero-section { text-align: center; margin-bottom: 4rem; animation: fadeInUp 0.8s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); border-radius: 50px; font-size: 13px; color: var(--primary-light); margin-bottom: 24px; font-weight: 500; }
+        .hero-badge i { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -2px; }
+        .hero-title .gradient-text { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; line-height: 1.7; }
+
+        /* Quote */
+        .quote-card { max-width: 700px; margin: 0 auto 3rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 32px 40px; position: relative; overflow: hidden; transition: all 0.3s ease; }
+        .quote-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+        .quote-card::before { content: '"'; position: absolute; top: -10px; left: 20px; font-size: 150px; font-family: Georgia, serif; color: rgba(99,102,241,0.08); line-height: 1; }
+        .quote-icon { width: 48px; height: 48px; background: var(--gradient-1); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 20px; box-shadow: var(--shadow-glow); }
+        .quote-text { font-size: 20px; font-weight: 500; font-style: italic; margin-bottom: 16px; position: relative; z-index: 1; line-height: 1.6; }
+        .quote-author { color: var(--secondary); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .new-quote-btn { margin-top: 20px; background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 10px 24px; border-radius: 12px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .new-quote-btn:hover { border-color: var(--primary); color: var(--primary-light); background: rgba(99,102,241,0.1); }
+
+        /* Tabs */
+        .tabs-container { display: flex; justify-content: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 8px; }
+        .tab-btn { padding: 14px 28px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; color: var(--text-secondary); cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+        .tab-btn:hover { background: var(--bg-card-hover); border-color: var(--border-hover); color: var(--text-primary); transform: translateY(-2px); }
+        .tab-btn.active { background: var(--gradient-1); border-color: transparent; color: white; box-shadow: var(--shadow-glow); }
+        .tab-btn i { font-size: 16px; }
+
+        /* Sections */
+        .content-section { display: none; animation: fadeIn 0.5s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 28px; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent); opacity: 0; transition: opacity 0.3s ease; }
+        .card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-lg); transform: translateY(-6px); }
+        .card:hover::before { opacity: 1; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+        .card-title { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 12px; color: var(--text-primary); }
+        .card-icon { width: 40px; height: 40px; background: rgba(99,102,241,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-light); font-size: 16px; }
+        .span-2 { grid-column: span 2; }
+        .header-actions { display: flex; gap: 8px; }
+        .action-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+        .action-btn:hover { border-color: var(--primary); color: var(--primary-light); background: rgba(99,102,241,0.1); }
+        .action-btn.active { background: var(--gradient-1); border-color: transparent; color: white; }
+        .action-btn.danger { border-color: rgba(239,68,68,0.3); color: var(--danger); }
+        .action-btn.danger:hover { background: rgba(239,68,68,0.1); border-color: var(--danger); }
+
+        /* Tags / Specialization */
+        .tags-container { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tag-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.3s ease; font-family: inherit; display: flex; align-items: center; gap: 8px; -webkit-tap-highlight-color: transparent; }
+        .tag-btn:hover { border-color: var(--primary); color: var(--primary-light); }
+        .tag-btn.active { background: var(--gradient-1); border-color: transparent; color: white; box-shadow: 0 4px 15px rgba(99,102,241,0.3); }
+        .tag-remove { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 12px; padding: 0; margin-left: 4px; }
+        .tag-remove:hover { color: var(--danger); }
+        .add-tag-group { display: flex; gap: 8px; margin-top: 12px; }
+        .hidden { display: none !important; }
+
+        /* XP Display & Tracking */
+        .xp-display { text-align: center; padding: 20px 0; }
+        .level-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(52,211,153,0.1)); border: 1px solid rgba(16,185,129,0.3); color: var(--secondary-light); padding: 8px 20px; border-radius: 50px; font-size: 13px; font-weight: 700; margin-bottom: 24px; letter-spacing: 0.5px; }
+        .xp-circle-wrapper { position: relative; width: 200px; height: 200px; margin: 0 auto 24px; }
+        .xp-circle-bg { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--secondary) calc(var(--progress) * 1%), rgba(255,255,255,0.05) 0); padding: 8px; box-shadow: var(--shadow-glow), inset 0 0 30px rgba(0,0,0,0.3); transition: background 0.5s ease; }
+        .xp-circle-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--bg-secondary); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .xp-value { font-family: 'Space Grotesk', sans-serif; font-size: 48px; font-weight: 800; background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+        .xp-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+        .level-progress-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+        .stat-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; text-align: center; }
+        .stat-box-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: var(--primary-light); }
+        .stat-box-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+        /* Progress / Milestones */
+        .progress-item { margin-bottom: 24px; }
+        .progress-item:last-child { margin-bottom: 0; }
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
+        .progress-label { font-size: 14px; color: var(--text-secondary); font-weight: 500; flex: 1; }
+        .progress-label-input { background: transparent; border: none; border-bottom: 1px dashed var(--primary); color: var(--text-primary); font-size: 14px; outline: none; width: 100%; font-family: inherit; font-weight: 500; }
+        .progress-value { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: var(--primary-light); display: flex; align-items: center; gap: 8px; }
+        .progress-bar { height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; background: var(--gradient-1); border-radius: 10px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); position: relative; }
+        .progress-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .milestone-delete { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 12px; opacity: 0.5; transition: opacity 0.3s; }
+        .milestone-delete:hover { opacity: 1; }
+
+        /* Empty State & Quick Add */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 36px; margin-bottom: 16px; opacity: 0.4; }
+        .empty-state p { font-size: 14px; }
+        
+        .todo-input-group { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .todo-input { flex: 1; min-width: 200px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px 20px; color: var(--text-primary); font-size: 14px; outline: none; transition: all 0.3s ease; font-family: inherit; }
+        .todo-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+        .todo-input::placeholder { color: var(--text-muted); }
+        .add-task-btn { background: var(--gradient-1); border: none; color: white; padding: 16px 28px; border-radius: 14px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; font-family: inherit; box-shadow: var(--shadow-glow); -webkit-tap-highlight-color: transparent; }
+        .add-task-btn:hover { transform: scale(1.02); box-shadow: 0 0 50px rgba(99,102,241,0.5); }
+        .task-list { max-height: 300px; overflow-y: auto; padding-right: 8px; }
+        .task-item { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 12px; transition: all 0.3s ease; }
+        .task-item:hover { background: rgba(255,255,255,0.04); border-color: var(--border-hover); }
+        .task-checkbox { width: 24px; height: 24px; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; }
+        .task-checkbox.checked { background: var(--secondary); border-color: var(--secondary); }
+        .task-checkbox.checked i { color: white; font-size: 12px; }
+        .task-content { flex: 1; }
+        .task-text { font-size: 14px; font-weight: 500; transition: all 0.3s ease; }
+        .task-item.completed .task-text { text-decoration: line-through; color: var(--text-muted); }
+
+        /* Goals Timeline */
+        .goals-timeline { display: grid; gap: 16px; }
+        .goal-timeline-item { display: flex; gap: 20px; padding: 18px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; transition: all 0.3s ease; }
+        .goal-timeline-item:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.04); transform: translateX(4px); }
+        .goal-date { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--accent-light); min-width: 70px; border-right: 1px solid var(--border-color); padding-right: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; line-height: 1.2; }
+        .goal-date span { font-size: 22px; }
+        .goal-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+        .goal-content p { font-size: 13px; color: var(--text-secondary); }
+
+        /* Routine */
+        .routine-list { display: grid; gap: 14px; }
+        .routine-item { display: grid; grid-template-columns: 100px 1fr auto; align-items: center; gap: 20px; padding: 18px 22px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; border-left: 4px solid var(--primary); transition: all 0.3s ease; }
+        .routine-item:hover { background: rgba(255,255,255,0.04); border-left-color: var(--primary-light); }
+        .routine-time { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: var(--primary-light); }
+        .routine-task { font-size: 14px; color: var(--text-secondary); }
+        .routine-remove { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        .routine-remove:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.1); }
+
+        /* Hackathons */
+        .hackathon-card { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 12px; transition: all 0.3s ease; flex-wrap: wrap; gap: 16px; }
+        .hackathon-card:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.04); }
+        .hackathon-info h4 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .hackathon-info p { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-upcoming { background: rgba(59,130,246,0.15); color: var(--info); border: 1px solid rgba(59,130,246,0.3); }
+        .status-won { background: rgba(16,185,129,0.15); color: var(--secondary); border: 1px solid rgba(16,185,129,0.3); }
+        .status-participated { background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border-color); }
+
+        /* Reviews */
+        .review-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .review-stat { text-align: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; }
+        .review-stat-val { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 800; background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px; outline: none; }
+        .review-stat-lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .review-textarea { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px 18px; color: var(--text-primary); font-size: 14px; outline: none; transition: all 0.3s ease; font-family: inherit; margin-bottom: 16px; resize: vertical; min-height: 80px; }
+        .review-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+        .review-label { font-size: 14px; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .slider-container { display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; }
+        .slider-container input[type="range"] { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 5px; -webkit-appearance: none; appearance: none; outline: none; }
+        .slider-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--gradient-1); border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px rgba(99,102,241,0.5); }
+        .slider-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: var(--primary-light); min-width: 30px; text-align: center; }
+        .save-review-btn { width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white; padding: 16px; border-radius: 14px; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.3s ease; font-family: inherit; box-shadow: 0 4px 20px rgba(16,185,129,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; -webkit-tap-highlight-color: transparent; }
+        .save-review-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(16,185,129,0.4); }
+        .past-review-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px; margin-bottom: 12px; }
+        .past-review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
+        .past-review-date { font-size: 13px; font-weight: 600; color: var(--accent-light); }
+        .delete-review-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        .delete-review-btn:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.1); }
+
+        /* History */
+        .history-item { position: relative; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px; margin-bottom: 16px; transition: all 0.3s ease; }
+        .history-item:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.04); }
+        .history-edit-badge { position: absolute; top: 12px; left: 12px; background: rgba(245,158,11,0.15); color: var(--accent-light); border: 1px solid rgba(245,158,11,0.3); padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: 600; display: none; align-items: center; gap: 6px; z-index: 2; }
+        .history-edit-badge.visible { display: flex; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+        .history-title { font-size: 16px; font-weight: 600; color: var(--primary-light); font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 10px; margin-left: 100px; }
+        .history-content { font-size: 14px; color: var(--text-secondary); white-space: pre-wrap; line-height: 1.6; margin-bottom: 16px; }
+        .history-textarea { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--primary); border-radius: 10px; padding: 12px; color: var(--text-primary); font-family: inherit; font-size: 14px; margin-bottom: 16px; resize: vertical; min-height: 120px; outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+
+        /* Roadmap - Timeline & Months */
+        .timeline { position: relative; padding-left: 40px; }
+        .timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--primary), var(--secondary), var(--accent), var(--danger), var(--info)); }
+        .sem-block { position: relative; margin-bottom: 50px; }
+        .sem-marker { position: absolute; left: -33px; top: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); border: 3px solid var(--bg-primary); z-index: 1; box-shadow: 0 0 10px var(--primary); }
+        .sem-block:nth-child(2) .sem-marker { background: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
+        .sem-block:nth-child(3) .sem-marker { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .sem-block:nth-child(4) .sem-marker { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+        .sem-block:nth-child(5) .sem-marker { background: var(--info); box-shadow: 0 0 10px var(--info); }
+        
+        .sem-header { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 22px 26px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .sem-header-left { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 250px; flex-wrap: wrap; }
+        .sem-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--primary-light); background: transparent; border: none; outline: none; width: 100%; max-width: 450px; padding: 8px 12px; border-radius: 10px; transition: all 0.3s ease; }
+        .sem-title:focus { background: rgba(99,102,241,0.1); box-shadow: 0 0 0 2px rgba(99,102,241,0.3); }
+        .sem-focus { font-size: 13px; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 8px 18px; border-radius: 50px; outline: none; border: 1px solid transparent; min-width: 220px; transition: all 0.3s ease; }
+        .sem-focus:focus { border-color: var(--primary); background: rgba(99,102,241,0.1); }
+        
+        .month-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .month-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .month-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); opacity: 0.5; }
+        .month-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+        .month-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--accent-light); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .month-title i { color: var(--accent); }
+        
+        .goal-list { list-style: none; margin-top: 0; }
+        .goal-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; }
+        .goal-checkbox { width: 20px; height: 20px; border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s ease; }
+        .goal-checkbox.checked { background: var(--secondary); border-color: var(--secondary); }
+        .goal-checkbox.checked i { color: white; font-size: 10px; }
+        .goal-text { font-size: 13px; color: var(--text-secondary); flex: 1; background: transparent; border: none; outline: none; font-family: inherit; }
+        .goal-text.completed { text-decoration: line-through; color: var(--text-muted); }
+        .goal-delete { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.3s ease; }
+        .goal-delete:hover { color: var(--danger); }
+        .add-goal-btn { background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color); color: var(--text-muted); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 12px; font-size: 13px; transition: all 0.3s ease; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+        .add-goal-btn:hover { border-color: var(--primary); color: var(--primary-light); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .span-2 { grid-column: span 1; }
+            .review-stats { grid-template-columns: repeat(2, 1fr); }
+            .history-title { margin-left: 0; margin-top: 30px; }
+        }
+        @media (max-width: 768px) {
+            .nav-stats { display: none; }
+            .main-container { padding: 100px 1rem 2rem; }
+            .routine-item { grid-template-columns: 1fr; gap: 10px; }
+            .routine-remove { justify-self: start; }
+            .stat-grid-3 { grid-template-columns: 1fr; }
+            .history-title { margin-left: 0; margin-top: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+    <div class="grid-pattern"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fas fa-rocket"></i></div>
+                <div class="logo-text">Let's <span>Crack It</span></div>
+            </a>
+            <div class="nav-right">
+                <div class="nav-stats">
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="navLevel">Beginner</div>
+                        <div class="nav-stat-label">Level</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="navXp">0</div>
+                        <div class="nav-stat-label">Total XP</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value">0</div>
+                        <div class="nav-stat-label">Day Streak</div>
+                    </div>
+                </div>
+                <div class="nav-actions">
+                    <button class="nav-action-btn" id="exportBtn"><i class="fas fa-download"></i> Export</button>
+                    <button class="nav-action-btn" id="importBtn"><i class="fas fa-upload"></i> Import</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        
+        <!-- Hero -->
+        <section class="hero-section">
+            <div class="hero-badge">
+                <i class="fas fa-fire"></i>
+                <span>Start Your B.Tech Journey</span>
+            </div>
+            <h1 class="hero-title">Track Your <span class="gradient-text">4-Year Journey</span></h1>
+            <p class="hero-subtitle">An all-in-one productivity dashboard designed for computer science students. Track your progress, manage hackathons, build routines, and plan your 4-year roadmap.</p>
+        </section>
+
+        <!-- Quote -->
+        <div class="quote-card">
+            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+            <p class="quote-text" id="quoteText">The future belongs to those who believe in the beauty of their dreams.</p>
+            <p class="quote-author"><i class="fas fa-user-graduate"></i> <span id="quoteAuthor">Eleanor Roosevelt</span></p>
+            <button class="new-quote-btn" id="newQuoteBtn"><i class="fas fa-sync-alt"></i> New Quote</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</button>
+            <button class="tab-btn" data-tab="hackathons"><i class="fas fa-trophy"></i> Hackathons</button>
+            <button class="tab-btn" data-tab="routine"><i class="fas fa-calendar-week"></i> Daily Routine</button>
+            <button class="tab-btn" data-tab="roadmap"><i class="fas fa-map-marked-alt"></i> 4-Year Roadmap</button>
+            <button class="tab-btn" data-tab="reviews"><i class="fas fa-star"></i> Reviews</button>
+            <button class="tab-btn" data-tab="history"><i class="fas fa-history"></i> History</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <div class="cards-grid">
+                
+                <!-- My Specialization Track -->
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-laptop-code"></i></div> My Specialization Track</div>
+                        <div class="header-actions">
+                            <button class="action-btn" id="editSpecBtn"><i class="fas fa-edit"></i> Edit</button>
+                        </div>
+                    </div>
+                    <div class="tags-container" id="tagsContainer"></div>
+                    <div class="add-tag-group hidden" id="addTagGroup">
+                        <input type="text" class="todo-input" id="newTagInput" placeholder="Add new track (e.g. Flutter)" style="margin-bottom: 0;">
+                        <button class="action-btn" id="addTagBtn"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 14px; color: var(--text-secondary);">Current Path: <span id="currentSpec" style="color: var(--primary-light); font-weight: 600;">React.js & Frontend Engineering</span></p>
+                </div>
+
+                <!-- Experience Points -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-bolt"></i></div> Experience Points</div>
+                    </div>
+                    <div class="xp-display">
+                        <div class="level-badge" id="levelBadge"><i class="fas fa-seedling"></i> LEVEL: BEGINNER</div>
+                        <div class="xp-circle-wrapper" style="--progress: 0;" id="xpCircleWrapper">
+                            <div class="xp-circle-bg">
+                                <div class="xp-circle-inner">
+                                    <div class="xp-value" id="xpValue">0</div>
+                                    <div class="xp-label" id="xpLabel">0 / 500 XP</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="level-progress-text" id="levelProgressText">Earn 500 XP to reach Learner</p>
+                    </div>
+                </div>
+
+                <!-- XP Tracking Boxes -->
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-chart-line"></i></div> XP Tracking</div>
+                    </div>
+                    <div class="stat-grid-3">
+                        <div class="stat-box">
+                            <div class="stat-box-value" id="todayXPStat">0</div>
+                            <div class="stat-box-label">Today (XP)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-box-value" id="weekXPStat">0</div>
+                            <div class="stat-box-label">This Week (XP)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-box-value" id="milestoneRateStat">0%</div>
+                            <div class="stat-box-label">Milestone Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Milestone Progress -->
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-flag-checkered"></i></div> Milestone Progress</div>
+                        <div class="header-actions">
+                            <button class="action-btn" id="addMilestoneBtn"><i class="fas fa-plus"></i> Add</button>
+                            <button class="action-btn" id="editMilestoneBtn"><i class="fas fa-edit"></i> Edit</button>
+                        </div>
+                    </div>
+                    <div id="milestoneList"></div>
+                </div>
+
+                <!-- Today's Focus -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-bullseye"></i></div> Today's Focus</div>
+                    </div>
+                    <div class="task-list" id="todayFocusList">
+                        <div class="empty-state" id="emptyFocus">
+                            <i class="fas fa-mug-hot"></i>
+                            <p>No tasks added yet</p>
+                        </div>
+                    </div>
+                    <div class="todo-input-group" style="margin-top: 16px; margin-bottom: 0;">
+                        <input type="text" class="todo-input" id="todayFocusInput" placeholder="Add a quick task...">
+                        <button class="add-task-btn" id="addTodayFocusBtn"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <!-- Upcoming Goals -->
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-calendar-alt"></i></div> Upcoming Goals (August 2025)</div>
+                    </div>
+                    <div class="goals-timeline">
+                        <div class="goal-timeline-item">
+                            <div class="goal-date"><span>15</span> Aug</div>
+                            <div class="goal-content">
+                                <h4>University Adaptation</h4>
+                                <p>Complete orientation, get ID card, and map out campus resources.</p>
+                            </div>
+                        </div>
+                        <div class="goal-timeline-item">
+                            <div class="goal-date"><span>20</span> Aug</div>
+                            <div class="goal-content">
+                                <h4>Course Syllabus Review</h4>
+                                <p>Review syllabus for Math, Physics, and Intro to Programming.</p>
+                            </div>
+                        </div>
+                        <div class="goal-timeline-item">
+                            <div class="goal-date"><span>30</span> Aug</div>
+                            <div class="goal-content">
+                                <h4>Setup Dev Environment</h4>
+                                <p>Install VS Code, Git, and setup GitHub student pack.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Hackathons Section -->
+        <section id="hackathons" class="content-section">
+            <div class="cards-grid">
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-trophy"></i></div> Hackathon Tracker</div>
+                        <span style="font-size: 12px; color: var(--text-muted);">Track schedules & wins</span>
+                    </div>
+                    <div class="todo-input-group">
+                        <input type="text" class="todo-input" id="hackathonName" placeholder="Hackathon Name (e.g., HackMIT)">
+                        <input type="date" class="todo-input" id="hackathonDate" style="max-width: 180px;">
+                        <select class="todo-input" id="hackathonStatus" style="max-width: 180px;">
+                            <option value="upcoming">Upcoming</option>
+                            <option value="participated">Participated</option>
+                            <option value="won">Won!</option>
+                        </select>
+                        <button class="add-task-btn" id="addHackathonBtn"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <div id="hackathonList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Routine Section -->
+        <section id="routine" class="content-section">
+            <div class="cards-grid">
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-calendar-week"></i></div> Daily Routine</div>
+                        <button class="add-task-btn" style="padding: 8px 16px; font-size: 13px;" id="addRoutineBtn"><i class="fas fa-plus"></i> Add Slot</button>
+                    </div>
+                    <div class="routine-list" id="routineList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap Section -->
+        <section id="roadmap" class="content-section">
+            <div class="timeline" id="timeline"></div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section id="reviews" class="content-section">
+            <div class="cards-grid">
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-star"></i></div> Weekly Review</div>
+                    </div>
+                    <div class="review-stats">
+                        <div class="review-stat">
+                            <div class="review-stat-val" contenteditable="true" id="revEasy">0</div>
+                            <div class="review-stat-lbl">Easy Problems (+15 XP)</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-val" contenteditable="true" id="revMedium">0</div>
+                            <div class="review-stat-lbl">Medium Problems (+25 XP)</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-val" contenteditable="true" id="revHard">0</div>
+                            <div class="review-stat-lbl">Hard Problems (+40 XP)</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-val" contenteditable="true" id="revVideos">0</div>
+                            <div class="review-stat-lbl">Videos Watched</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-val" contenteditable="true" id="revHours">0</div>
+                            <div class="review-stat-lbl">Hours Coded</div>
+                        </div>
+                        <div class="review-stat">
+                            <div class="review-stat-val" contenteditable="true" id="revContests">0</div>
+                            <div class="review-stat-lbl">Contests Done</div>
+                        </div>
+                    </div>
+
+                    <div class="review-label"><i class="fas fa-check-circle"></i> What I Completed This Week</div>
+                    <textarea class="review-textarea" placeholder="List your accomplishments..."></textarea>
+
+                    <div class="review-label"><i class="fas fa-bullseye"></i> Next Week Goals</div>
+                    <textarea class="review-textarea" placeholder="What do you want to achieve?"></textarea>
+
+                    <div class="review-label"><i class="fas fa-lightbulb"></i> What I Learned</div>
+                    <textarea class="review-textarea" placeholder="Key takeaways..."></textarea>
+
+                    <div class="review-label"><i class="fas fa-tools"></i> Areas to Improve</div>
+                    <textarea class="review-textarea" placeholder="Where can you get better?"></textarea>
+
+                    <div class="review-label"><i class="fas fa-fire"></i> Motivation Level</div>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="10" value="5" id="motivationSlider">
+                        <div class="slider-value" id="motivationValue">5</div>
+                    </div>
+
+                    <button class="save-review-btn" id="saveReviewBtn"><i class="fas fa-save"></i> Save Weekly Review (+50 XP Bonus!)</button>
+                </div>
+
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-history"></i></div> Past Reviews</div>
+                    </div>
+                    <div id="pastReviewsList">
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <p>No reviews yet. Complete your first weekly review above!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="content-section">
+            <div class="cards-grid">
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-book"></i></div> Add Monthly History</div>
+                    </div>
+                    <div class="todo-input-group">
+                        <input type="text" class="todo-input" id="historyTitleInput" placeholder="Month/Title (e.g., August 2025 Recap)">
+                    </div>
+                    <textarea class="review-textarea" id="historyContentInput" placeholder="What did you do this month? Projects completed, topics learned, etc." style="min-height: 120px;"></textarea>
+                    <button class="save-review-btn" id="addHistoryBtn" style="background: var(--gradient-1); box-shadow: 0 4px 20px rgba(99,102,241,0.3);"><i class="fas fa-plus"></i> Add History Entry</button>
+                </div>
+
+                <div class="card span-2">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-archive"></i></div> Past Months</div>
+                    </div>
+                    <div id="historyList"></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- Default Data State ---
+        const defaultState = {
+            totalXP: 0,
+            todayXP: 0,
+            weekXP: 0,
+            quotes: [
+                { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+                { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+                { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+                { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier" },
+                { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" }
+            ],
+            tags: ["React.js", "Node.js", "Python/AI", "Cloud (AWS)", "Java Spring"],
+            milestones: [
+                { label: "1st Year Foundation", progress: 0 },
+                { label: "Problems Solved (Target: 500)", progress: 0 },
+                { label: "Course Completion (4-Year Roadmap)", progress: 0 }
+            ],
+            todayTasks: [],
+            hackathons: [
+                { name: "Smart India Hackathon 2025", date: "2025-10-15", status: "upcoming" },
+                { name: "HackTheNorth", date: "2025-09-20", status: "upcoming" }
+            ],
+            routines: [
+                { time: "06:00 AM", task: "Morning Workout & Meditation" },
+                { time: "08:00 AM", task: "Breakfast & College Prep" },
+                { time: "09:00 AM", task: "College Lectures & Labs" },
+                { time: "01:00 PM", task: "Lunch & Rest" },
+                { time: "02:00 PM", task: "Self Study (Core Subjects)" },
+                { time: "05:00 PM", task: "Coding Practice (Leetcode)" },
+                { time: "08:00 PM", task: "Dinner & Family Time" },
+                { time: "10:00 PM", task: "Revision & Plan for Tomorrow" }
+            ],
+            roadmap: [
+                {
+                    title: "Semester 1 (Aug 2025 - Dec 2025)",
+                    focus: "Focus: C++ Basics & College Adaptation",
+                    months: [
+                        { month: "August 2025", goals: [ {text: "College starts!", done: false}, {text: "Buy Supreme 4.0", done: false}, {text: "Setup Dev Environment", done: false} ] },
+                        { month: "September 2025", goals: [ {text: "C++ Basics: Variables, Conditions, Loops", done: false}, {text: "Practice CodeChef", done: false}, {text: "Attend Classes & Make Notes", done: false} ] },
+                        { month: "October 2025", goals: [ {text: "Learn Functions & Arrays", done: false}, {text: "Calculator Project", done: false}, {text: "Mid-term Prep", done: false} ] },
+                        { month: "November 2025", goals: [ {text: "Learn Strings & Pointers", done: false}, {text: "CodeChef Contest", done: false}, {text: "Target: 30+ Solved", done: false} ] },
+                        { month: "December 2025", goals: [ {text: "Number Guessing Game Project", done: false}, {text: "End-term Exams", done: false}, {text: "Target GPA: 8.5+", done: false} ] }
+                    ]
+                },
+                {
+                    title: "Semester 2 (Jan 2026 - May 2026)",
+                    focus: "Focus: OOPs, DSA & SUPREME 4.0",
+                    months: [
+                        { month: "January 2026", goals: [ {text: "SUPREME 4.0: OOPs Basics", done: false}, {text: "University Reopening", done: false}, {text: "Maintain Attendance", done: false} ] },
+                        { month: "February 2026", goals: [ {text: "Advanced OOPs & Project", done: false}, {text: "LeetCode/CodeChef Practice", done: false} ] },
+                        { month: "March 2026", goals: [ {text: "DSA Introduction", done: false}, {text: "Start Codeforces", done: false} ] },
+                        { month: "April 2026", goals: [ {text: "Recursion & Sorting", done: false}, {text: "Mid-sem Exam Prep", done: false} ] },
+                        { month: "May 2026", goals: [ {text: "Linked Lists", done: false}, {text: "Revise & App Dev", done: false}, {text: "Target: Cumulative GPA 8.5+", done: false} ] }
+                    ]
+                },
+                {
+                    title: "Semester 3 (Aug 2026 - Dec 2026)",
+                    focus: "Focus: Advanced DSA & Web Basics",
+                    months: [
+                        { month: "August 2026", goals: [ {text: "Advanced DSA: Trees & Graphs", done: false}, {text: "HTML & CSS Basics", done: false} ] },
+                        { month: "September 2026", goals: [ {text: "JavaScript Basics", done: false}, {text: "Personal Project Setup", done: false} ] },
+                        { month: "October 2026", goals: [ {text: "DBMS Fundamentals", done: false}, {text: "Algorithm Practice", done: false} ] },
+                        { month: "November 2026", goals: [ {text: "Backend Integration", done: false}, {text: "DSA Contests", done: false} ] },
+                        { month: "December 2026", goals: [ {text: "Final Revisions & Exams", done: false}, {text: "Target: 400+ Total Solved", done: false} ] }
+                    ]
+                },
+                {
+                    title: "Semester 4 (Jan 2027 - May 2027)",
+                    focus: "Focus: DP, Web Dev & Projects",
+                    months: [
+                        { month: "January 2027", goals: [ {text: "DSA: Dynamic Programming", done: false}, {text: "Node.js & Express.js", done: false} ] },
+                        { month: "February 2027", goals: [ {text: "E-commerce Frontend Project", done: false}, {text: "LeetCode Hard Problems", done: false} ] },
+                        { month: "March 2027", goals: [ {text: "Blog Platform Full Stack", done: false}, {text: "Mock Interviews", done: false} ] },
+                        { month: "April 2027", goals: [ {text: "Internship Applications", done: false}, {text: "University Exams", done: false} ] },
+                        { month: "May 2027", goals: [ {text: "Target: 600+ Solved", done: false}, {text: "Project Deployment", done: false} ] }
+                    ]
+                },
+                {
+                    title: "Semester 5 (Aug 2027 - Dec 2027)",
+                    focus: "Focus: System Design & Internship Season",
+                    months: [
+                        { month: "August 2027", goals: [ {text: "Advanced DSA: Hard problems daily", done: false}, {text: "System Design Basics", done: false}, {text: "Personalized deep dives", done: false} ] },
+                        { month: "September 2027", goals: [ {text: "INTERNSHIP SEASON BEGINS!", done: false}, {text: "Update Resume", done: false}, {text: "Apply to Microsoft, Google, etc.", done: false} ] },
+                        { month: "October 2027", goals: [ {text: "Interview Prep (Mock Interviews)", done: false}, {text: "Codeforces Contests", done: false}, {text: "Network on LinkedIn", done: false} ] },
+                        { month: "November 2027", goals: [ {text: "Attend Internship Interviews", done: false}, {text: "Backup: Research Projects", done: false} ] },
+                        { month: "December 2027", goals: [ {text: "Internship Results", done: false}, {text: "Prep for Semester Exams", done: false}, {text: "Plan for next semester", done: false} ] }
+                    ]
+                },
+                {
+                    title: "Semester 6 (Jan 2028 - May 2028)",
+                    focus: "Focus: Internships or Heavy Projects",
+                    months: [
+                        { month: "January 2028", goals: [ {text: "Got Internship: Prep role/tech stack", done: false}, {text: "No Internship: Open Source & Small Cos", done: false}, {text: "DSA & Flagship Project", done: false} ] },
+                        { month: "February 2028", goals: [ {text: "Summer Internship OR Self-Project", done: false}, {text: "Build SaaS App Clones / AI Tools", done: false} ] },
+                        { month: "March 2028", goals: [ {text: "Open Source Contributions", done: false}, {text: "Write Tech Blogs", done: false} ] },
+                        { month: "April 2028", goals: [ {text: "LinkedIn Networking", done: false}, {text: "Project Completion", done: false} ] },
+                        { month: "May 2028", goals: [ {text: "Internship/Project Summary", done: false}, {text: "Exams & Reflection", done: false}, {text: "Prep for Aug Placement Season", done: false} ] }
+                    ]
+                },
+                {
+                    title: "Semester 7 (Aug 2028 - Dec 2028)",
+                    focus: "Focus: PLACEMENT SEASON!",
+                    months: [
+                        { month: "August 2028", goals: [ {text: "Register for Campus Placements", done: false}, {text: "Optimize Resume", done: false}, {text: "Company List Released", done: false}, {text: "Start Applying", done: false} ] },
+                        { month: "September 2028", goals: [ {text: "Placement Peak: Multiple Companies", done: false}, {text: "Continuous Interviews", done: false}, {text: "Analyze Rejections", done: false} ] },
+                        { month: "October 2028", goals: [ {text: "Keep Interviewing", done: false}, {text: "Networking with Alumni", done: false} ] },
+                        { month: "November 2028", goals: [ {text: "Final Placement Drives", done: false}, {text: "Backup Plans", done: false} ] },
+                        { month: "December 2028", goals: [ {text: "Placed: Celebrate & Keep Learning", done: false}, {text: "Unplaced: Keep trying, Referrals", done: false}, {text: "Consider Higher Studies (GATE/GRE)", done: false} ] }
+                    ]
+                },
+                {
+                    title: "Semester 8 (Jan 2029 - May 2029)",
+                    focus: "Focus: Final Year Project & Graduation",
+                    months: [
+                        { month: "January 2029", goals: [ {text: "Final Year Project (FYP) Dev", done: false}, {text: "Placed: Learn job skills", done: false}, {text: "Unplaced: Apply & strengthen resume", done: false} ] },
+                        { month: "February 2029", goals: [ {text: "FYP Documentation", done: false}, {text: "Freelance Projects", done: false}, {text: "Consider GATE/GRE", done: false} ] },
+                        { month: "March 2029", goals: [ {text: "FYP Presentation Prep", done: false}, {text: "Deploy Project", done: false} ] },
+                        { month: "April 2029", goals: [ {text: "FYP Final Defense", done: false}, {text: "Clear Backlogs", done: false}, {text: "End Semester Exams", done: false} ] },
+                        { month: "May 2029", goals: [ {text: "Graduation Day!", done: false}, {text: "Receive Degree", done: false}, {text: "Farewell Campus", done: false} ] }
+                    ]
+                }
+            ],
+            pastReviews: [],
+            history: []
+        };
+
+        // --- Safe LocalStorage Load ---
+        let state;
+        try {
+            const savedData = localStorage.getItem('letsCrackItState');
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                state = {
+                    ...defaultState,
+                    ...parsed,
+                    quotes: defaultState.quotes, 
+                    tags: Array.isArray(parsed.tags) ? parsed.tags : defaultState.tags,
+                    milestones: Array.isArray(parsed.milestones) ? parsed.milestones : defaultState.milestones,
+                    todayTasks: Array.isArray(parsed.todayTasks) ? parsed.todayTasks : [],
+                    hackathons: Array.isArray(parsed.hackathons) ? parsed.hackathons : defaultState.hackathons,
+                    routines: Array.isArray(parsed.routines) ? parsed.routines : defaultState.routines,
+                    roadmap: Array.isArray(parsed.roadmap) ? parsed.roadmap : defaultState.roadmap,
+                    pastReviews: Array.isArray(parsed.pastReviews) ? parsed.pastReviews : [],
+                    history: Array.isArray(parsed.history) ? parsed.history : [],
+                    totalXP: typeof parsed.totalXP === 'number' ? parsed.totalXP : 0,
+                    todayXP: typeof parsed.todayXP === 'number' ? parsed.todayXP : 0,
+                    weekXP: typeof parsed.weekXP === 'number' ? parsed.weekXP : 0
+                };
+            } else {
+                state = defaultState;
+            }
+        } catch (e) {
+            state = defaultState;
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('letsCrackItState', JSON.stringify(state));
+            } catch (e) {
+                console.error("Failed to save state", e);
+            }
+        }
+
+        // --- Export & Import Logic ---
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const dataStr = JSON.stringify(state, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lets_crack_it_backup_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('importBtn').addEventListener('click', () => {
+            document.getElementById('importFile').click();
+        });
+
+        document.getElementById('importFile').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    state = { ...defaultState, ...importedData };
+                    saveState();
+                    initializeAll(); 
+                    alert("Data imported successfully!");
+                } catch (err) {
+                    alert("Error importing file. Make sure it's a valid backup file.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; 
+        });
+
+        const levels = [
+            { name: "Beginner", min: 0, max: 0, next: "Learner", nextMax: 500 },
+            { name: "Learner", min: 0, max: 500, next: "Coder", nextMax: 2000 },
+            { name: "Coder", min: 500, max: 2000, next: "Developer", nextMax: 4000 },
+            { name: "Developer", min: 2000, max: 4000, next: "Expert", nextMax: 8000 },
+            { name: "Expert", min: 4000, max: 8000, next: "Professional", nextMax: 15000 },
+            { name: "Professional", min: 8000, max: 15000, next: "Master", nextMax: 30000 },
+            { name: "Master", min: 15000, max: 30000, next: "Legend", nextMax: 30000 }
+        ];
+
+        function getLevelData(xp) {
+            if (xp <= 0) return levels[0];
+            for(let i = 1; i < levels.length; i++) {
+                if(xp > levels[i-1].max && xp <= levels[i].max) return levels[i];
+            }
+            return levels[levels.length - 1];
+        }
+
+        function updateXPDisplay(xp) {
+            const level = getLevelData(xp);
+            let progressPercent = 0, nextLevelName = level.next, xpToNext = 0, displayMax = level.max;
+
+            if (level.name === "Beginner") {
+                progressPercent = (xp / level.nextMax) * 100; 
+                xpToNext = level.nextMax - xp;
+                displayMax = level.nextMax;
+            } else if (level.name === "Master") {
+                progressPercent = ((xp - level.min) / (level.max - level.min)) * 100;
+                if (xp >= level.max) progressPercent = 100;
+                xpToNext = Math.max(0, level.max - xp);
+                displayMax = level.max;
+                if (xp >= level.max) nextLevelName = "MAX";
+            } else {
+                const xpInLevel = xp - level.min;
+                const xpForNext = level.max - level.min;
+                progressPercent = (xpInLevel / xpForNext) * 100;
+                xpToNext = level.max - xp;
+                displayMax = level.max;
+            }
+
+            document.getElementById('levelBadge').innerHTML = `<i class="fas fa-seedling"></i> LEVEL: ${level.name.toUpperCase()}`;
+            document.getElementById('xpValue').innerText = xp.toLocaleString();
+            document.getElementById('xpLabel').innerText = `${xp.toLocaleString()} / ${displayMax.toLocaleString()} XP`;
+            
+            if (level.name === "Master" && xp >= level.max) {
+                document.getElementById('levelProgressText').innerText = `Max Level Achieved! 🚀`;
+            } else {
+                document.getElementById('levelProgressText').innerText = `Earn ${xpToNext.toLocaleString()} XP to reach ${nextLevelName}`;
+            }
+
+            document.getElementById('xpCircleWrapper').style.setProperty('--progress', progressPercent);
+            document.getElementById('navXp').innerText = xp.toLocaleString();
+            document.getElementById('navLevel').innerText = level.name;
+            document.getElementById('todayXPStat').innerText = state.todayXP;
+            document.getElementById('weekXPStat').innerText = state.weekXP;
+        }
+
+        // --- DOM Elements ---
+        const nav = document.getElementById('navbar');
+        const tabs = document.querySelectorAll('.tab-btn');
+        const sections = document.querySelectorAll('.content-section');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        document.getElementById('newQuoteBtn').addEventListener('click', () => {
+            const random = state.quotes[Math.floor(Math.random() * state.quotes.length)];
+            document.getElementById('quoteText').textContent = random.text;
+            document.getElementById('quoteAuthor').textContent = random.author;
+        });
+
+        // --- Specialization Tags ---
+        const tagsContainer = document.getElementById('tagsContainer');
+        const editSpecBtn = document.getElementById('editSpecBtn');
+        const addTagGroup = document.getElementById('addTagGroup');
+        let specEditMode = false;
+
+        function renderTags() {
+            tagsContainer.innerHTML = '';
+            state.tags.forEach(tag => {
+                const btn = document.createElement('button');
+                btn.className = 'tag-btn' + (tag === 'React.js' ? ' active' : '');
+                btn.innerHTML = `${tag} ${specEditMode ? `<span class="tag-remove" data-tag="${tag}"><i class="fas fa-times"></i></span>` : ''}`;
+                btn.addEventListener('click', (e) => {
+                    if(e.target.classList.contains('tag-remove') || e.target.parentElement.classList.contains('tag-remove')) return;
+                    document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('currentSpec').textContent = tag + ' Track';
+                });
+                tagsContainer.appendChild(btn);
+            });
+
+            if (specEditMode) {
+                document.querySelectorAll('.tag-remove').forEach(span => {
+                    span.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const tagToRemove = span.dataset.tag;
+                        state.tags = state.tags.filter(t => t !== tagToRemove);
+                        saveState();
+                        renderTags();
+                    });
+                });
+            }
+        }
+
+        editSpecBtn.addEventListener('click', () => {
+            specEditMode = !specEditMode;
+            editSpecBtn.classList.toggle('active');
+            addTagGroup.classList.toggle('hidden');
+            renderTags();
+        });
+
+        document.getElementById('addTagBtn').addEventListener('click', () => {
+            const val = document.getElementById('newTagInput').value.trim();
+            if (val && !state.tags.includes(val)) {
+                state.tags.push(val);
+                document.getElementById('newTagInput').value = '';
+                saveState();
+                renderTags();
+            }
+        });
+
+        // --- Milestones Logic ---
+        const milestoneList = document.getElementById('milestoneList');
+        const editMilestoneBtn = document.getElementById('editMilestoneBtn');
+        let milestoneEditMode = false;
+
+        function renderMilestones() {
+            milestoneList.innerHTML = '';
+            state.milestones.forEach((m, index) => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+                item.innerHTML = `
+                    <div class="progress-header">
+                        <span class="progress-label">
+                            ${milestoneEditMode ? `<input type="text" class="progress-label-input" value="${m.label}" onchange="updateMilestoneLabel(${index}, this.value)">` : m.label}
+                        </span>
+                        <span class="progress-value">
+                            ${milestoneEditMode ? `<input type="number" min="0" max="100" value="${m.progress}" style="width: 60px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; color: var(--primary-light); text-align: center; padding: 4px;" onchange="updateMilestoneProgress(${index}, this.value)">%` : m.progress + '%'}
+                            ${milestoneEditMode ? `<button class="milestone-delete" onclick="deleteMilestone(${index})"><i class="fas fa-trash"></i></button>` : ''}
+                        </span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${m.progress}%;"></div></div>
+                `;
+                milestoneList.appendChild(item);
+            });
+            
+            if(state.milestones.length > 0) {
+                const avgRate = state.milestones.reduce((sum, m) => sum + m.progress, 0) / state.milestones.length;
+                document.getElementById('milestoneRateStat').innerText = Math.round(avgRate) + '%';
+            } else {
+                document.getElementById('milestoneRateStat').innerText = '0%';
+            }
+        }
+
+        editMilestoneBtn.addEventListener('click', () => {
+            milestoneEditMode = !milestoneEditMode;
+            editMilestoneBtn.classList.toggle('active');
+            renderMilestones();
+        });
+
+        document.getElementById('addMilestoneBtn').addEventListener('click', () => {
+            state.milestones.push({ label: "New Milestone", progress: 0 });
+            milestoneEditMode = true;
+            editMilestoneBtn.classList.add('active');
+            saveState();
+            renderMilestones();
+        });
+
+        window.updateMilestoneLabel = (i, val) => { state.milestones[i].label = val; saveState(); };
+        window.updateMilestoneProgress = (i, val) => { 
+            state.milestones[i].progress = Math.max(0, Math.min(100, parseInt(val) || 0)); 
+            saveState(); 
+            renderMilestones(); 
+        };
+        window.deleteMilestone = (i) => { state.milestones.splice(i, 1); saveState(); renderMilestones(); };
+
+        // --- Today's Focus Quick Add ---
+        const todayFocusList = document.getElementById('todayFocusList');
+        const todayFocusInput = document.getElementById('todayFocusInput');
+
+        function renderTodayFocus() {
+            todayFocusList.innerHTML = '';
+            if(state.todayTasks.length === 0) {
+                todayFocusList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-mug-hot"></i>
+                        <p>No tasks added yet</p>
+                    </div>
+                `;
+                return;
+            }
+            state.todayTasks.forEach((task, index) => {
+                const el = document.createElement('div');
+                el.className = `task-item ${task.completed ? 'completed' : ''}`;
+                el.innerHTML = `
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTodayTask(${index})">
+                        ${task.completed ? '<i class="fas fa-check"></i>' : ''}
+                    </div>
+                    <div class="task-content">
+                        <div class="task-text">${task.text}</div>
+                    </div>
+                `;
+                todayFocusList.appendChild(el);
+            });
+        }
+
+        window.toggleTodayTask = (index) => {
+            state.todayTasks[index].completed = !state.todayTasks[index].completed;
+            saveState();
+            renderTodayFocus();
+        };
+
+        document.getElementById('addTodayFocusBtn').addEventListener('click', () => {
+            const text = todayFocusInput.value.trim();
+            if (text === '') return;
+            state.todayTasks.push({ text, completed: false });
+            todayFocusInput.value = '';
+            saveState();
+            renderTodayFocus();
+        });
+
+        // --- Hackathons Logic ---
+        const hackathonList = document.getElementById('hackathonList');
+        function renderHackathons() {
+            hackathonList.innerHTML = '';
+            if(state.hackathons.length === 0) {
+                hackathonList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-trophy"></i>
+                        <p>No hackathons added yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            state.hackathons.forEach((h, index) => {
+                const el = document.createElement('div');
+                el.className = 'hackathon-card';
+                const statusClass = `status-${h.status}`;
+                el.innerHTML = `
+                    <div class="hackathon-info">
+                        <h4>${h.name}</h4>
+                        <p><i class="fas fa-calendar-alt"></i> ${h.date}</p>
+                    </div>
+                    <div style="display:flex; align-items:center; gap: 12px;">
+                        <span class="status-badge ${statusClass}">${h.status}</span>
+                        <button class="routine-remove" onclick="removeHackathon(${index})">Remove</button>
+                    </div>
+                `;
+                hackathonList.appendChild(el);
+            });
+        }
+
+        window.removeHackathon = (index) => {
+            state.hackathons.splice(index, 1);
+            saveState();
+            renderHackathons();
+        };
+
+        document.getElementById('addHackathonBtn').addEventListener('click', () => {
+            const name = document.getElementById('hackathonName').value.trim();
+            const date = document.getElementById('hackathonDate').value;
+            const status = document.getElementById('hackathonStatus').value;
+            if (!name || !date) return;
+            state.hackathons.push({ name, date, status });
+            document.getElementById('hackathonName').value = '';
+            document.getElementById('hackathonDate').value = '';
+            saveState();
+            renderHackathons();
+        });
+
+        // --- Routine Logic ---
+        const routineList = document.getElementById('routineList');
+        function renderRoutines() {
+            routineList.innerHTML = '';
+            state.routines.forEach((r, index) => {
+                const el = document.createElement('div');
+                el.className = 'routine-item';
+                el.innerHTML = `
+                    <div class="routine-time">${r.time}</div>
+                    <div class="routine-task">${r.task}</div>
+                    <button class="routine-remove" onclick="removeRoutine(${index})">Remove</button>
+                `;
+                routineList.appendChild(el);
+            });
+        }
+
+        window.removeRoutine = (index) => {
+            state.routines.splice(index, 1);
+            saveState();
+            renderRoutines();
+        };
+
+        document.getElementById('addRoutineBtn').addEventListener('click', () => {
+            let time = prompt("Enter time (e.g., 11:00 AM):");
+            let task = prompt("Enter routine task:");
+            if(time && task) {
+                state.routines.push({ time, task });
+                saveState();
+                renderRoutines();
+            }
+        });
+
+        // --- Roadmap Logic (With Months) ---
+        const timeline = document.getElementById('timeline');
+        function renderRoadmap() {
+            timeline.innerHTML = '';
+            state.roadmap.forEach((sem, semIndex) => {
+                const semBlock = document.createElement('div');
+                semBlock.className = 'sem-block';
+                
+                let monthsHTML = '';
+                sem.months.forEach((monthData, mIndex) => {
+                    let goalsHTML = '';
+                    monthData.goals.forEach((goal, gIndex) => {
+                        goalsHTML += `
+                            <li class="goal-item">
+                                <div class="goal-checkbox ${goal.done ? 'checked' : ''}" onclick="toggleGoal(${semIndex}, ${mIndex}, ${gIndex})">
+                                    ${goal.done ? '<i class="fas fa-check"></i>' : ''}
+                                </div>
+                                <input type="text" class="goal-text ${goal.done ? 'completed' : ''}" value="${goal.text}" onchange="updateGoal(${semIndex}, ${mIndex}, ${gIndex}, this.value)">
+                                <button class="goal-delete" onclick="deleteGoal(${semIndex}, ${mIndex}, ${gIndex})"><i class="fas fa-times"></i></button>
+                            </li>
+                        `;
+                    });
+
+                    monthsHTML += `
+                        <div class="month-card">
+                            <div class="month-title"><i class="fas fa-calendar-day"></i> ${monthData.month}</div>
+                            <ul class="goal-list">${goalsHTML}</ul>
+                            <button class="add-goal-btn" onclick="addGoal(${semIndex}, ${mIndex})"><i class="fas fa-plus"></i> Add Task</button>
+                        </div>
+                    `;
+                });
+
+                semBlock.innerHTML = `
+                    <div class="sem-marker"></div>
+                    <div class="sem-header">
+                        <div class="sem-header-left">
+                            <input type="text" class="sem-title" value="${sem.title}" onchange="updateSemTitle(${semIndex}, this.value)">
+                            <input type="text" class="sem-focus" value="${sem.focus}" onchange="updateSemFocus(${semIndex}, this.value)">
+                        </div>
+                    </div>
+                    <div class="month-grid">${monthsHTML}</div>
+                `;
+                timeline.appendChild(semBlock);
+            });
+        }
+
+        window.toggleGoal = (s, m, g) => {
+            state.roadmap[s].months[m].goals[g].done = !state.roadmap[s].months[m].goals[g].done;
+            saveState();
+            renderRoadmap();
+        };
+
+        window.updateGoal = (s, m, g, val) => {
+            state.roadmap[s].months[m].goals[g].text = val;
+            saveState();
+        };
+
+        window.deleteGoal = (s, m, g) => {
+            state.roadmap[s].months[m].goals.splice(g, 1);
+            saveState();
+            renderRoadmap();
+        };
+
+        window.addGoal = (s, m) => {
+            state.roadmap[s].months[m].goals.push({ text: "New Task", done: false });
+            saveState();
+            renderRoadmap();
+        };
+
+        window.updateSemTitle = (s, val) => { state.roadmap[s].title = val; saveState(); };
+        window.updateSemFocus = (s, val) => { state.roadmap[s].focus = val; saveState(); };
+
+        // --- Reviews Logic ---
+        const motivationSlider = document.getElementById('motivationSlider');
+        const motivationValue = document.getElementById('motivationValue');
+        const pastReviewsList = document.getElementById('pastReviewsList');
+
+        motivationSlider.addEventListener('input', (e) => {
+            motivationValue.textContent = e.target.value;
+        });
+
+        document.getElementById('saveReviewBtn').addEventListener('click', () => {
+            const easy = parseInt(document.getElementById('revEasy').textContent) || 0;
+            const medium = parseInt(document.getElementById('revMedium').textContent) || 0;
+            const hard = parseInt(document.getElementById('revHard').textContent) || 0;
+            const videos = parseInt(document.getElementById('revVideos').textContent) || 0;
+            const hours = parseInt(document.getElementById('revHours').textContent) || 0;
+            const contests = parseInt(document.getElementById('revContests').textContent) || 0;
+            
+            const textareas = document.querySelectorAll('.review-textarea');
+            
+            const problemXP = (easy * 15) + (medium * 25) + (hard * 40);
+            const bonusXP = 50;
+            const earnedXP = problemXP + bonusXP;
+            
+            state.totalXP += earnedXP;
+            state.todayXP += earnedXP;
+            state.weekXP += earnedXP;
+            
+            updateXPDisplay(state.totalXP);
+            
+            const reviewData = {
+                date: new Date().toLocaleDateString(),
+                easy, medium, hard, videos, hours, contests,
+                earnedXP,
+                completed: textareas[0].value,
+                goals: textareas[1].value,
+                learned: textareas[2].value,
+                improvements: textareas[3].value,
+                motivation: motivationSlider.value
+            };
+
+            state.pastReviews.unshift(reviewData);
+            saveState();
+            renderPastReviews();
+            
+            document.getElementById('revEasy').textContent = '0';
+            document.getElementById('revMedium').textContent = '0';
+            document.getElementById('revHard').textContent = '0';
+            document.getElementById('revVideos').textContent = '0';
+            document.getElementById('revHours').textContent = '0';
+            document.getElementById('revContests').textContent = '0';
+            textareas.forEach(t => t.value = '');
+            motivationSlider.value = 5;
+            motivationValue.textContent = '5';
+            
+            alert(`Weekly Review Saved!\nYou earned ${earnedXP} XP!`);
+        });
+
+        function renderPastReviews() {
+            if(state.pastReviews.length === 0) {
+                pastReviewsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No reviews yet. Complete your first weekly review above!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            pastReviewsList.innerHTML = '';
+            state.pastReviews.forEach((r, index) => {
+                const el = document.createElement('div');
+                el.className = 'past-review-item';
+                el.innerHTML = `
+                    <div class="past-review-header">
+                        <div class="past-review-date"><i class="fas fa-calendar-day"></i> ${r.date} <span style="color: var(--secondary); margin-left: 10px;">(Earned ${r.earnedXP} XP)</span></div>
+                        <button class="delete-review-btn" onclick="deleteReview(${index})"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin-bottom: 12px; text-align: center;">
+                        <div><strong>${r.easy}</strong><br><small style="color:var(--text-muted)">Easy</small></div>
+                        <div><strong>${r.medium}</strong><br><small style="color:var(--text-muted)">Medium</small></div>
+                        <div><strong>${r.hard}</strong><br><small style="color:var(--text-muted)">Hard</small></div>
+                        <div><strong>${r.videos}</strong><br><small style="color:var(--text-muted)">Videos</small></div>
+                        <div><strong>${r.hours}</strong><br><small style="color:var(--text-muted)">Hours</small></div>
+                        <div><strong>${r.contests}</strong><br><small style="color:var(--text-muted)">Contests</small></div>
+                    </div>
+                    <p style="margin-bottom: 8px;"><strong>Completed:</strong> ${r.completed || '-'}</p>
+                    <p style="margin-bottom: 8px;"><strong>Goals:</strong> ${r.goals || '-'}</p>
+                    <p style="margin-bottom: 8px;"><strong>Learned:</strong> ${r.learned || '-'}</p>
+                    <p style="margin-bottom: 8px;"><strong>Improvements:</strong> ${r.improvements || '-'}</p>
+                    <p><strong>Motivation Level:</strong> <span style="color: var(--primary-light);">${r.motivation}/10</span></p>
+                `;
+                pastReviewsList.appendChild(el);
+            });
+        }
+
+        window.deleteReview = (index) => {
+            state.pastReviews.splice(index, 1);
+            saveState();
+            renderPastReviews();
+        };
+
+        // --- History Logic ---
+        const historyList = document.getElementById('historyList');
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (state.history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No history entries yet. Add your first monthly recap above!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            state.history.forEach((h, index) => {
+                const el = document.createElement('div');
+                el.className = 'history-item';
+                const isEditing = h.isEditing || false;
+
+                el.innerHTML = `
+                    <div class="history-edit-badge ${h.isEdited ? 'visible' : ''}"><i class="fas fa-pencil-alt"></i> Edited</div>
+                    <div class="history-header">
+                        <div class="history-title">${h.title}</div>
+                        <div class="header-actions">
+                            ${isEditing 
+                                ? `<button class="action-btn active" onclick="saveHistoryEdit(${index})"><i class="fas fa-save"></i> Save</button>` 
+                                : `<button class="action-btn" onclick="editHistory(${index})"><i class="fas fa-edit"></i> Edit</button>`
+                            }
+                            <button class="action-btn danger" onclick="deleteHistory(${index})"><i class="fas fa-trash"></i> Remove</button>
+                        </div>
+                    </div>
+                    ${isEditing 
+                        ? `<textarea class="history-textarea" id="historyEditArea-${index}">${h.content}</textarea>` 
+                        : `<div class="history-content">${h.content}</div>`
+                    }
+                `;
+                historyList.appendChild(el);
+            });
+        }
+
+        window.editHistory = (i) => {
+            state.history[i].isEditing = true;
+            renderHistory();
+        };
+
+        window.saveHistoryEdit = (i) => {
+            const newText = document.getElementById(`historyEditArea-${i}`).value;
+            if (state.history[i].content !== newText) {
+                state.history[i].isEdited = true;
+            }
+            state.history[i].content = newText;
+            state.history[i].isEditing = false;
+            saveState();
+            renderHistory();
+        };
+
+        window.deleteHistory = (i) => {
+            state.history.splice(i, 1);
+            saveState();
+            renderHistory();
+        };
+
+        document.getElementById('addHistoryBtn').addEventListener('click', () => {
+            const title = document.getElementById('historyTitleInput').value.trim();
+            const content = document.getElementById('historyContentInput').value.trim();
+            if (!title || !content) return alert("Please enter both a title and content.");
+            
+            state.history.unshift({ title, content, isEdited: false, isEditing: false });
+            saveState();
+            document.getElementById('historyTitleInput').value = '';
+            document.getElementById('historyContentInput').value = '';
+            renderHistory();
+        });
+
+        // --- Initialize All Render Functions ---
+        function initializeAll() {
+            updateXPDisplay(state.totalXP);
+            renderTags();
+            renderMilestones();
+            renderTodayFocus();
+            renderHackathons();
+            renderRoutines();
+            renderRoadmap();
+            renderPastReviews();
+            renderHistory();
+        }
+
+        // --- Initial Render ---
+        initializeAll();
+    </script>
+</body>
+</html>
