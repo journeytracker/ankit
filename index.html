@@ -122,6 +122,9 @@
         .stat-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; text-align: center; }
         .stat-box-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: var(--primary-light); }
         .stat-box-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+        .check-in-btn { width: 100%; margin-top: 16px; background: linear-gradient(135deg, #f59e0b 0%, #f5576c 100%); border: none; color: white; padding: 14px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s ease; font-family: inherit; box-shadow: 0 4px 15px rgba(245,158,11,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; -webkit-tap-highlight-color: transparent; }
+        .check-in-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245,158,11,0.4); }
+        .check-in-btn.done { background: rgba(255,255,255,0.05); color: var(--secondary); cursor: default; box-shadow: none; }
 
         /* Progress / Milestones */
         .progress-item { margin-bottom: 24px; }
@@ -160,12 +163,18 @@
 
         /* Goals Timeline */
         .goals-timeline { display: grid; gap: 16px; }
-        .goal-timeline-item { display: flex; gap: 20px; padding: 18px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; transition: all 0.3s ease; }
+        .goal-timeline-item { display: flex; gap: 20px; padding: 18px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; transition: all 0.3s ease; align-items: center; }
         .goal-timeline-item:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.04); transform: translateX(4px); }
         .goal-date { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--accent-light); min-width: 70px; border-right: 1px solid var(--border-color); padding-right: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; line-height: 1.2; }
         .goal-date span { font-size: 22px; }
+        .goal-content { flex: 1; }
         .goal-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
         .goal-content p { font-size: 13px; color: var(--text-secondary); }
+        .goal-edit-input { background: rgba(255,255,255,0.05); border: 1px solid var(--primary); border-radius: 6px; padding: 4px 8px; color: var(--text-primary); font-family: inherit; font-size: 14px; width: 100%; margin-bottom: 8px; outline: none; }
+        .goal-edit-textarea { background: rgba(255,255,255,0.05); border: 1px solid var(--primary); border-radius: 6px; padding: 4px 8px; color: var(--text-primary); font-family: inherit; font-size: 13px; width: 100%; outline: none; resize: vertical; min-height: 40px; }
+        .date-edit-group { display: flex; gap: 8px; margin-bottom: 8px; }
+        .date-edit-group input { max-width: 60px; text-align: center; }
+        .goal-delete-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; -webkit-tap-highlight-color: transparent; }
 
         /* Routine */
         .routine-list { display: grid; gap: 14px; }
@@ -291,7 +300,7 @@
                         <div class="nav-stat-label">Total XP</div>
                     </div>
                     <div class="nav-stat">
-                        <div class="nav-stat-value">0</div>
+                        <div class="nav-stat-value" id="navStreak">0</div>
                         <div class="nav-stat-label">Day Streak</div>
                     </div>
                 </div>
@@ -374,7 +383,7 @@
                     </div>
                 </div>
 
-                <!-- XP Tracking Boxes -->
+                <!-- XP Tracking & Attendance -->
                 <div class="card span-2">
                     <div class="card-header">
                         <div class="card-title"><div class="card-icon"><i class="fas fa-chart-line"></i></div> XP Tracking</div>
@@ -393,6 +402,7 @@
                             <div class="stat-box-label">Milestone Rate</div>
                         </div>
                     </div>
+                    <button class="check-in-btn" id="checkInBtn"><i class="fas fa-calendar-check"></i> Daily Check-in (+10 XP)</button>
                 </div>
 
                 <!-- Milestone Progress -->
@@ -427,31 +437,13 @@
                 <!-- Upcoming Goals -->
                 <div class="card span-2">
                     <div class="card-header">
-                        <div class="card-title"><div class="card-icon"><i class="fas fa-calendar-alt"></i></div> Upcoming Goals (August 2025)</div>
-                    </div>
-                    <div class="goals-timeline">
-                        <div class="goal-timeline-item">
-                            <div class="goal-date"><span>15</span> Aug</div>
-                            <div class="goal-content">
-                                <h4>University Adaptation</h4>
-                                <p>Complete orientation, get ID card, and map out campus resources.</p>
-                            </div>
-                        </div>
-                        <div class="goal-timeline-item">
-                            <div class="goal-date"><span>20</span> Aug</div>
-                            <div class="goal-content">
-                                <h4>Course Syllabus Review</h4>
-                                <p>Review syllabus for Math, Physics, and Intro to Programming.</p>
-                            </div>
-                        </div>
-                        <div class="goal-timeline-item">
-                            <div class="goal-date"><span>30</span> Aug</div>
-                            <div class="goal-content">
-                                <h4>Setup Dev Environment</h4>
-                                <p>Install VS Code, Git, and setup GitHub student pack.</p>
-                            </div>
+                        <div class="card-title"><div class="card-icon"><i class="fas fa-calendar-alt"></i></div> Upcoming Goals</div>
+                        <div class="header-actions">
+                            <button class="action-btn" id="addUpcomingGoalBtn"><i class="fas fa-plus"></i> Add</button>
+                            <button class="action-btn" id="editUpcomingBtn"><i class="fas fa-edit"></i> Edit</button>
                         </div>
                     </div>
+                    <div class="goals-timeline" id="goalsTimeline"></div>
                 </div>
 
             </div>
@@ -598,6 +590,8 @@
             totalXP: 0,
             todayXP: 0,
             weekXP: 0,
+            streak: 0,
+            lastCheckIn: null,
             quotes: [
                 { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
                 { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
@@ -612,6 +606,11 @@
                 { label: "Course Completion (4-Year Roadmap)", progress: 0 }
             ],
             todayTasks: [],
+            upcomingGoals: [
+                { day: "15", month: "Aug", title: "University Adaptation", desc: "Complete orientation, get ID card, and map out campus resources." },
+                { day: "20", month: "Aug", title: "Course Syllabus Review", desc: "Review syllabus for Math, Physics, and Intro to Programming." },
+                { day: "30", month: "Aug", title: "Setup Dev Environment", desc: "Install VS Code, Git, and setup GitHub student pack." }
+            ],
             hackathons: [
                 { name: "Smart India Hackathon 2025", date: "2025-10-15", status: "upcoming" },
                 { name: "HackTheNorth", date: "2025-09-20", status: "upcoming" }
@@ -733,6 +732,7 @@
                     tags: Array.isArray(parsed.tags) ? parsed.tags : defaultState.tags,
                     milestones: Array.isArray(parsed.milestones) ? parsed.milestones : defaultState.milestones,
                     todayTasks: Array.isArray(parsed.todayTasks) ? parsed.todayTasks : [],
+                    upcomingGoals: Array.isArray(parsed.upcomingGoals) ? parsed.upcomingGoals : defaultState.upcomingGoals,
                     hackathons: Array.isArray(parsed.hackathons) ? parsed.hackathons : defaultState.hackathons,
                     routines: Array.isArray(parsed.routines) ? parsed.routines : defaultState.routines,
                     roadmap: Array.isArray(parsed.roadmap) ? parsed.roadmap : defaultState.roadmap,
@@ -740,7 +740,9 @@
                     history: Array.isArray(parsed.history) ? parsed.history : [],
                     totalXP: typeof parsed.totalXP === 'number' ? parsed.totalXP : 0,
                     todayXP: typeof parsed.todayXP === 'number' ? parsed.todayXP : 0,
-                    weekXP: typeof parsed.weekXP === 'number' ? parsed.weekXP : 0
+                    weekXP: typeof parsed.weekXP === 'number' ? parsed.weekXP : 0,
+                    streak: typeof parsed.streak === 'number' ? parsed.streak : 0,
+                    lastCheckIn: parsed.lastCheckIn || null
                 };
             } else {
                 state = defaultState;
@@ -849,7 +851,48 @@
             document.getElementById('navLevel').innerText = level.name;
             document.getElementById('todayXPStat').innerText = state.todayXP;
             document.getElementById('weekXPStat').innerText = state.weekXP;
+            document.getElementById('navStreak').innerText = state.streak;
         }
+
+        // --- Attendance / Check-in Logic ---
+        const checkInBtn = document.getElementById('checkInBtn');
+        function updateCheckInBtn() {
+            const today = new Date().toLocaleDateString();
+            if (state.lastCheckIn === today) {
+                checkInBtn.innerHTML = `<i class="fas fa-check-circle"></i> Checked In Today!`;
+                checkInBtn.classList.add('done');
+                checkInBtn.disabled = true;
+            } else {
+                checkInBtn.innerHTML = `<i class="fas fa-calendar-check"></i> Daily Check-in (+10 XP)`;
+                checkInBtn.classList.remove('done');
+                checkInBtn.disabled = false;
+            }
+        }
+
+        checkInBtn.addEventListener('click', () => {
+            const today = new Date().toLocaleDateString();
+            if (state.lastCheckIn === today) return;
+
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yStr = yesterday.toLocaleDateString();
+
+            if (state.lastCheckIn === yStr) {
+                state.streak += 1;
+            } else {
+                state.streak = 1;
+            }
+
+            state.lastCheckIn = today;
+            state.totalXP += 10;
+            state.todayXP += 10;
+            state.weekXP += 10;
+
+            saveState();
+            updateXPDisplay(state.totalXP);
+            updateCheckInBtn();
+            alert(`Daily Check-in Successful! +10 XP. Current Streak: ${state.streak} days!`);
+        });
 
         // --- DOM Elements ---
         const nav = document.getElementById('navbar');
@@ -1026,6 +1069,73 @@
             saveState();
             renderTodayFocus();
         });
+
+        // --- Upcoming Goals Logic ---
+        const goalsTimeline = document.getElementById('goalsTimeline');
+        const editUpcomingBtn = document.getElementById('editUpcomingBtn');
+        let upcomingEditMode = false;
+
+        function renderUpcomingGoals() {
+            goalsTimeline.innerHTML = '';
+            if (state.upcomingGoals.length === 0) {
+                goalsTimeline.innerHTML = `<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No upcoming goals added.</p></div>`;
+                return;
+            }
+
+            state.upcomingGoals.forEach((g, index) => {
+                const el = document.createElement('div');
+                el.className = 'goal-timeline-item';
+                if (upcomingEditMode) {
+                    el.innerHTML = `
+                        <div class="goal-date" style="border: 1px solid var(--primary); border-radius: 8px; padding: 8px;">
+                            <div class="date-edit-group" style="flex-direction: column; gap: 4px; border: none; padding: 0; min-width: 50px;">
+                                <input type="text" class="goal-edit-input" value="${g.day}" style="margin: 0; text-align: center;" onchange="updateUpcomingGoal(${index}, 'day', this.value)">
+                                <input type="text" class="goal-edit-input" value="${g.month}" style="margin: 0; text-align: center;" onchange="updateUpcomingGoal(${index}, 'month', this.value)">
+                            </div>
+                        </div>
+                        <div class="goal-content">
+                            <input type="text" class="goal-edit-input" value="${g.title}" onchange="updateUpcomingGoal(${index}, 'title', this.value)">
+                            <textarea class="goal-edit-textarea" onchange="updateUpcomingGoal(${index}, 'desc', this.value)">${g.desc}</textarea>
+                        </div>
+                        <button class="goal-delete-btn" onclick="deleteUpcomingGoal(${index})"><i class="fas fa-trash"></i> Delete</button>
+                    `;
+                } else {
+                    el.innerHTML = `
+                        <div class="goal-date"><span>${g.day}</span> ${g.month}</div>
+                        <div class="goal-content">
+                            <h4>${g.title}</h4>
+                            <p>${g.desc}</p>
+                        </div>
+                    `;
+                }
+                goalsTimeline.appendChild(el);
+            });
+        }
+
+        editUpcomingBtn.addEventListener('click', () => {
+            upcomingEditMode = !upcomingEditMode;
+            editUpcomingBtn.classList.toggle('active');
+            renderUpcomingGoals();
+        });
+
+        document.getElementById('addUpcomingGoalBtn').addEventListener('click', () => {
+            state.upcomingGoals.push({ day: "01", month: "Jan", title: "New Goal", desc: "Goal description..." });
+            upcomingEditMode = true;
+            editUpcomingBtn.classList.add('active');
+            saveState();
+            renderUpcomingGoals();
+        });
+
+        window.updateUpcomingGoal = (i, field, val) => {
+            state.upcomingGoals[i][field] = val;
+            saveState();
+        };
+
+        window.deleteUpcomingGoal = (i) => {
+            state.upcomingGoals.splice(i, 1);
+            saveState();
+            renderUpcomingGoals();
+        };
 
         // --- Hackathons Logic ---
         const hackathonList = document.getElementById('hackathonList');
@@ -1276,8 +1386,17 @@
         }
 
         window.deleteReview = (index) => {
+            const reviewToDelete = state.pastReviews[index];
+            const xpToRemove = reviewToDelete.earnedXP || 0;
+
+            state.totalXP = Math.max(0, state.totalXP - xpToRemove);
+            state.todayXP = Math.max(0, state.todayXP - xpToRemove);
+            state.weekXP = Math.max(0, state.weekXP - xpToRemove);
+
             state.pastReviews.splice(index, 1);
+
             saveState();
+            updateXPDisplay(state.totalXP);
             renderPastReviews();
         };
 
@@ -1359,9 +1478,11 @@
         // --- Initialize All Render Functions ---
         function initializeAll() {
             updateXPDisplay(state.totalXP);
+            updateCheckInBtn();
             renderTags();
             renderMilestones();
             renderTodayFocus();
+            renderUpcomingGoals();
             renderHackathons();
             renderRoutines();
             renderRoadmap();
