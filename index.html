@@ -405,7 +405,7 @@
                             <div class="stat-box-label">Milestone Rate</div>
                         </div>
                     </div>
-                    <button class="check-in-btn" id="checkInBtn"><i class="fas fa-calendar-check"></i> Daily Check-in (+10 XP)</button>
+                    <button class="check-in-btn" id="checkInBtn"><i class="fas fa-calendar-check"></i> Daily Check-in</button>
                 </div>
 
                 <!-- Milestone Progress -->
@@ -545,7 +545,7 @@
                         <div class="slider-value" id="motivationValue">5</div>
                     </div>
 
-                    <button class="save-review-btn" id="saveReviewBtn"><i class="fas fa-save"></i> Save Weekly Review (+50 XP Bonus!)</button>
+                    <button class="save-review-btn" id="saveReviewBtn"><i class="fas fa-save"></i> Save Weekly Review (+15 XP Bonus!)</button>
                 </div>
 
                 <div class="card span-2">
@@ -766,7 +766,7 @@
         document.getElementById('eraseBtn').addEventListener('click', () => {
             if (confirm("ARE YOU SURE? This will permanently delete ALL your progress, XP, tasks, and history. This cannot be undone!")) {
                 localStorage.removeItem('letsCrackItState');
-                state = JSON.parse(JSON.stringify(defaultState)); // Deep clone defaults
+                state = JSON.parse(JSON.stringify(defaultState)); 
                 initializeAll();
                 alert("All data has been erased! Welcome to Day 1.");
             }
@@ -876,7 +876,7 @@
                 checkInBtn.classList.add('done');
                 checkInBtn.disabled = true;
             } else {
-                checkInBtn.innerHTML = `<i class="fas fa-calendar-check"></i> Daily Check-in (+10 XP)`;
+                checkInBtn.innerHTML = `<i class="fas fa-calendar-check"></i> Daily Check-in`;
                 checkInBtn.classList.remove('done');
                 checkInBtn.disabled = false;
             }
@@ -897,14 +897,11 @@
             }
 
             state.lastCheckIn = today;
-            state.totalXP += 10;
-            state.todayXP += 10;
-            state.weekXP += 10;
-
+            // REMOVED XP ADDITION FOR CHECK-IN
             saveState();
             updateXPDisplay(state.totalXP);
             updateCheckInBtn();
-            alert(`Daily Check-in Successful! +10 XP. Current Streak: ${state.streak} days!`);
+            alert(`Daily Check-in Successful! Current Streak: ${state.streak} days!`);
         });
 
         // --- DOM Elements ---
@@ -1323,7 +1320,8 @@
             const textareas = document.querySelectorAll('.review-textarea');
             
             const problemXP = (easy * 15) + (medium * 25) + (hard * 40);
-            const bonusXP = 50;
+            // CHANGED BONUS FROM 50 TO 15
+            const bonusXP = 15;
             const earnedXP = problemXP + bonusXP;
             
             state.totalXP += earnedXP;
