@@ -515,11 +515,11 @@
                         </div>
                         <div class="review-stat">
                             <div class="review-stat-val" contenteditable="true" id="revVideos">0</div>
-                            <div class="review-stat-lbl">Videos Watched</div>
+                            <div class="review-stat-lbl">Videos Watched (+5 XP)</div>
                         </div>
                         <div class="review-stat">
                             <div class="review-stat-val" contenteditable="true" id="revHours">0</div>
-                            <div class="review-stat-lbl">Hours Coded</div>
+                            <div class="review-stat-lbl">Hours Coded (+10 XP)</div>
                         </div>
                         <div class="review-stat">
                             <div class="review-stat-val" contenteditable="true" id="revContests">0</div>
@@ -897,7 +897,6 @@
             }
 
             state.lastCheckIn = today;
-            // REMOVED XP ADDITION FOR CHECK-IN
             saveState();
             updateXPDisplay(state.totalXP);
             updateCheckInBtn();
@@ -1320,9 +1319,10 @@
             const textareas = document.querySelectorAll('.review-textarea');
             
             const problemXP = (easy * 15) + (medium * 25) + (hard * 40);
-            // CHANGED BONUS FROM 50 TO 15
+            const videoXP = videos * 5; 
+            const hoursXP = hours * 10; // ADDED +10 XP FOR HOURS CODED
             const bonusXP = 15;
-            const earnedXP = problemXP + bonusXP;
+            const earnedXP = problemXP + videoXP + hoursXP + bonusXP;
             
             state.totalXP += earnedXP;
             state.todayXP += earnedXP;
