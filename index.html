@@ -256,7 +256,7 @@
         .goal-checkbox { width: 20px; height: 20px; border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s ease; }
         .goal-checkbox.checked { background: var(--secondary); border-color: var(--secondary); }
         .goal-checkbox.checked i { color: white; font-size: 10px; }
-        .goal-text { font-size: 13px; color: var(--text-secondary); flex: 1; background: transparent; border: none; outline: none; font-family: inherit; }
+        .goal-text { font-size: 13px; color: var(--text-secondary); flex: 1; background: transparent; border: none; outline: none; font-family: inherit; word-break: break-word; }
         .goal-text.completed { text-decoration: line-through; color: var(--text-muted); }
         .goal-delete { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.3s ease; }
         .goal-delete:hover { color: var(--danger); }
@@ -490,6 +490,9 @@
 
         <!-- Roadmap Section -->
         <section id="roadmap" class="content-section">
+            <div style="max-width: 1400px; margin: 0 auto 20px; display: flex; justify-content: flex-end;">
+                <button class="action-btn" id="editRoadmapBtn"><i class="fas fa-edit"></i> Edit Roadmap</button>
+            </div>
             <div class="timeline" id="timeline"></div>
         </section>
 
@@ -1227,34 +1230,68 @@
             }
         });
 
-        // --- Roadmap Logic (With Months) ---
+        // --- Roadmap Logic (With Months & Edit Mode Toggle) ---
         const timeline = document.getElementById('timeline');
+        const editRoadmapBtn = document.getElementById('editRoadmapBtn');
+        let roadmapEditMode = false;
+
+        editRoadmapBtn.addEventListener('click', () => {
+            roadmapEditMode = !roadmapEditMode;
+            editRoadmapBtn.classList.toggle('active');
+            if (roadmapEditMode) {
+                editRoadmapBtn.innerHTML = `<i class="fas fa-save"></i> Done Editing`;
+            } else {
+                editRoadmapBtn.innerHTML = `<i class="fas fa-edit"></i> Edit Roadmap`;
+            }
+            renderRoadmap();
+        });
+
         function renderRoadmap() {
             timeline.innerHTML = '';
             state.roadmap.forEach((sem, semIndex) => {
                 const semBlock = document.createElement('div');
                 semBlock.className = 'sem-block';
                 
+                const titleHtml = roadmapEditMode 
+                    ? `<input type="text" class="sem-title" value="${sem.title}" onchange="updateSemTitle(${semIndex}, this.value)">`
+                    : `<div class="sem-title">${sem.title}</div>`;
+                    
+                const focusHtml = roadmapEditMode 
+                    ? `<input type="text" class="sem-focus" value="${sem.focus}" onchange="updateSemFocus(${semIndex}, this.value)">`
+                    : `<div class="sem-focus">${sem.focus}</div>`;
+
                 let monthsHTML = '';
                 sem.months.forEach((monthData, mIndex) => {
                     let goalsHTML = '';
                     monthData.goals.forEach((goal, gIndex) => {
+                        const goalTextHtml = roadmapEditMode 
+                            ? `<input type="text" class="goal-text ${goal.done ? 'completed' : ''}" value="${goal.text}" onchange="updateGoal(${semIndex}, ${mIndex}, ${gIndex}, this.value)">`
+                            : `<div class="goal-text ${goal.done ? 'completed' : ''}">${goal.text}</div>`;
+
+                        const deleteBtnHtml = roadmapEditMode 
+                            ? `<button class="goal-delete" onclick="deleteGoal(${semIndex}, ${mIndex}, ${gIndex})"><i class="fas fa-times"></i></button>`
+                            : '';
+
                         goalsHTML += `
                             <li class="goal-item">
                                 <div class="goal-checkbox ${goal.done ? 'checked' : ''}" onclick="toggleGoal(${semIndex}, ${mIndex}, ${gIndex})">
                                     ${goal.done ? '<i class="fas fa-check"></i>' : ''}
                                 </div>
-                                <input type="text" class="goal-text ${goal.done ? 'completed' : ''}" value="${goal.text}" onchange="updateGoal(${semIndex}, ${mIndex}, ${gIndex}, this.value)">
-                                <button class="goal-delete" onclick="deleteGoal(${semIndex}, ${mIndex}, ${gIndex})"><i class="fas fa-times"></i></button>
+                                ${goalTextHtml}
+                                ${deleteBtnHtml}
                             </li>
                         `;
                     });
+
+                    const addGoalBtnHtml = roadmapEditMode 
+                        ? `<button class="add-goal-btn" onclick="addGoal(${semIndex}, ${mIndex})"><i class="fas fa-plus"></i> Add Task</button>`
+                        : '';
 
                     monthsHTML += `
                         <div class="month-card">
                             <div class="month-title"><i class="fas fa-calendar-day"></i> ${monthData.month}</div>
                             <ul class="goal-list">${goalsHTML}</ul>
-                            <button class="add-goal-btn" onclick="addGoal(${semIndex}, ${mIndex})"><i class="fas fa-plus"></i> Add Task</button>
+                            ${addGoalBtnHtml}
                         </div>
                     `;
                 });
@@ -1263,8 +1300,8 @@
                     <div class="sem-marker"></div>
                     <div class="sem-header">
                         <div class="sem-header-left">
-                            <input type="text" class="sem-title" value="${sem.title}" onchange="updateSemTitle(${semIndex}, this.value)">
-                            <input type="text" class="sem-focus" value="${sem.focus}" onchange="updateSemFocus(${semIndex}, this.value)">
+                            ${titleHtml}
+                            ${focusHtml}
                         </div>
                     </div>
                     <div class="month-grid">${monthsHTML}</div>
@@ -1320,7 +1357,7 @@
             
             const problemXP = (easy * 15) + (medium * 25) + (hard * 40);
             const videoXP = videos * 5; 
-            const hoursXP = hours * 10; // ADDED +10 XP FOR HOURS CODED
+            const hoursXP = hours * 10; 
             const bonusXP = 15;
             const earnedXP = problemXP + videoXP + hoursXP + bonusXP;
             
