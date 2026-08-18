@@ -263,6 +263,52 @@
         .add-goal-btn { background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color); color: var(--text-muted); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 12px; font-size: 13px; transition: all 0.3s ease; font-family: inherit; -webkit-tap-highlight-color: transparent; }
         .add-goal-btn:hover { border-color: var(--primary); color: var(--primary-light); }
 
+        /* Login Modal */
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .login-overlay.active { opacity: 1; pointer-events: all; }
+        .login-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 24px; padding: 40px; width: 90%; max-width: 400px; box-shadow: var(--shadow-lg); }
+        .login-box h3 { font-family: 'Space Grotesk', sans-serif; font-size: 24px; margin-bottom: 20px; text-align: center; }
+        .login-box input { width: 100%; margin-bottom: 16px; }
+        .login-box button { width: 100%; margin-bottom: 8px; }
+        
+        /* Read-Only Mode Styling */
+        body.read-only .header-actions,
+        body.read-only .todo-input-group,
+        body.read-only .add-task-btn,
+        body.read-only .routine-remove,
+        body.read-only .delete-review-btn,
+        body.read-only .goal-delete,
+        body.read-only .add-goal-btn,
+        body.read-only .check-in-btn,
+        body.read-only .save-review-btn,
+        body.read-only .milestone-delete,
+        body.read-only .goal-delete-btn,
+        body.read-only #addHistoryBtn,
+        body.read-only #editRoadmapBtn {
+            display: none !important; 
+        }
+        body.read-only #revEasy,
+        body.read-only #revMedium,
+        body.read-only #revHard,
+        body.read-only #revVideos,
+        body.read-only #revHours,
+        body.read-only #revContests,
+        body.read-only input,
+        body.read-only textarea {
+            pointer-events: none;
+        }
+        body.read-only .review-textarea:placeholder-shown,
+        body.read-only #historyTitleInput:placeholder-shown,
+        body.read-only #historyContentInput:placeholder-shown {
+            display: none !important;
+        }
+        body.read-only .empty-state {
+            display: none !important;
+        }
+        body.read-only #editRoadmapContainer {
+            display: none !important;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .span-2 { grid-column: span 1; }
@@ -279,7 +325,7 @@
         }
     </style>
 </head>
-<body>
+<body class="read-only">
 
     <div class="bg-animation"></div>
     <div class="grid-pattern"></div>
@@ -307,14 +353,23 @@
                     </div>
                 </div>
                 <div class="nav-actions">
-                    <button class="nav-action-btn" id="exportBtn"><i class="fas fa-download"></i> Export</button>
-                    <button class="nav-action-btn" id="importBtn"><i class="fas fa-upload"></i> Import</button>
-                    <button class="nav-action-btn danger" id="eraseBtn"><i class="fas fa-trash-alt"></i> Erase</button>
-                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <button class="nav-action-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Admin Login</button>
+                    <button class="nav-action-btn danger hidden" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             </div>
         </div>
     </nav>
+
+    <!-- Login Modal -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h3>Admin Login</h3>
+            <input type="email" class="todo-input" id="loginEmail" placeholder="Email">
+            <input type="password" class="todo-input" id="loginPassword" placeholder="Password">
+            <button class="save-review-btn" id="loginSubmitBtn"><i class="fas fa-unlock"></i> Login</button>
+            <button class="action-btn" id="loginCancelBtn" style="width: 100%; justify-content: center;"><i class="fas fa-times"></i> Cancel</button>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <div class="main-container">
@@ -490,7 +545,7 @@
 
         <!-- Roadmap Section -->
         <section id="roadmap" class="content-section">
-            <div style="max-width: 1400px; margin: 0 auto 20px; display: flex; justify-content: flex-end;">
+            <div id="editRoadmapContainer" style="max-width: 1400px; margin: 0 auto 20px; display: flex; justify-content: flex-end;">
                 <button class="action-btn" id="editRoadmapBtn"><i class="fas fa-edit"></i> Edit Roadmap</button>
             </div>
             <div class="timeline" id="timeline"></div>
@@ -590,7 +645,27 @@
 
     </div>
 
-    <script>
+    <script type="module">
+        // --- Firebase Imports ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- Your Firebase Config ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyB-KJJDu19pPMPob0priaNztk5excPRES4",
+          authDomain: "lets-crack-it-f50e5.firebaseapp.com",
+          projectId: "lets-crack-it-f50e5",
+          storageBucket: "lets-crack-it-f50e5.firebasestorage.app",
+          messagingSenderId: "475697383303",
+          appId: "1:475697383303:web:c83e01e2b912676b733522"
+        };
+
+        // --- Initialize Firebase ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
         // --- Default Data State ---
         const defaultState = {
             totalXP: 0,
@@ -725,91 +800,84 @@
             history: []
         };
 
-        // --- Safe LocalStorage Load ---
-        let state;
-        try {
-            const savedData = localStorage.getItem('letsCrackItState');
-            if (savedData) {
-                const parsed = JSON.parse(savedData);
-                state = {
-                    ...defaultState,
-                    ...parsed,
-                    quotes: defaultState.quotes, 
-                    tags: Array.isArray(parsed.tags) ? parsed.tags : defaultState.tags,
-                    milestones: Array.isArray(parsed.milestones) ? parsed.milestones : defaultState.milestones,
-                    todayTasks: Array.isArray(parsed.todayTasks) ? parsed.todayTasks : [],
-                    upcomingGoals: Array.isArray(parsed.upcomingGoals) ? parsed.upcomingGoals : defaultState.upcomingGoals,
-                    hackathons: Array.isArray(parsed.hackathons) ? parsed.hackathons : defaultState.hackathons,
-                    routines: Array.isArray(parsed.routines) ? parsed.routines : defaultState.routines,
-                    roadmap: Array.isArray(parsed.roadmap) ? parsed.roadmap : defaultState.roadmap,
-                    pastReviews: Array.isArray(parsed.pastReviews) ? parsed.pastReviews : [],
-                    history: Array.isArray(parsed.history) ? parsed.history : [],
-                    totalXP: typeof parsed.totalXP === 'number' ? parsed.totalXP : 0,
-                    todayXP: typeof parsed.todayXP === 'number' ? parsed.todayXP : 0,
-                    weekXP: typeof parsed.weekXP === 'number' ? parsed.weekXP : 0,
-                    streak: typeof parsed.streak === 'number' ? parsed.streak : 0,
-                    lastCheckIn: parsed.lastCheckIn || null
-                };
-            } else {
-                state = JSON.parse(JSON.stringify(defaultState));
-            }
-        } catch (e) {
-            state = JSON.parse(JSON.stringify(defaultState));
-        }
+        // --- Global State ---
+        let state = JSON.parse(JSON.stringify(defaultState));
 
+        // --- Cloud Save Logic ---
         function saveState() {
-            try {
-                localStorage.setItem('letsCrackItState', JSON.stringify(state));
-            } catch (e) {
-                console.error("Failed to save state", e);
+            if (auth.currentUser) {
+                setDoc(doc(db, "appData", "mainState"), state).catch(e => console.error("Firestore save error: ", e));
             }
         }
 
-        // --- Erase Logic ---
-        document.getElementById('eraseBtn').addEventListener('click', () => {
-            if (confirm("ARE YOU SURE? This will permanently delete ALL your progress, XP, tasks, and history. This cannot be undone!")) {
-                localStorage.removeItem('letsCrackItState');
-                state = JSON.parse(JSON.stringify(defaultState)); 
-                initializeAll();
-                alert("All data has been erased! Welcome to Day 1.");
+        // --- Cloud Load Logic (Real-time) ---
+        const stateDocRef = doc(db, "appData", "mainState");
+        onSnapshot(stateDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+                state = docSnap.data();
+                // Merge any missing defaults
+                state = { ...defaultState, ...state };
+                state.quotes = defaultState.quotes; 
+                state.tags = Array.isArray(state.tags) ? state.tags : defaultState.tags;
+                state.milestones = Array.isArray(state.milestones) ? state.milestones : defaultState.milestones;
+                state.todayTasks = Array.isArray(state.todayTasks) ? state.todayTasks : [];
+                state.upcomingGoals = Array.isArray(state.upcomingGoals) ? state.upcomingGoals : defaultState.upcomingGoals;
+                state.hackathons = Array.isArray(state.hackathons) ? state.hackathons : defaultState.hackathons;
+                state.routines = Array.isArray(state.routines) ? state.routines : defaultState.routines;
+                state.roadmap = Array.isArray(state.roadmap) ? state.roadmap : defaultState.roadmap;
+                state.pastReviews = Array.isArray(state.pastReviews) ? state.pastReviews : [];
+                state.history = Array.isArray(state.history) ? state.history : [];
+                state.totalXP = typeof state.totalXP === 'number' ? state.totalXP : 0;
+                state.todayXP = typeof state.todayXP === 'number' ? state.todayXP : 0;
+                state.weekXP = typeof state.weekXP === 'number' ? state.weekXP : 0;
+                state.streak = typeof state.streak === 'number' ? state.streak : 0;
+                state.lastCheckIn = state.lastCheckIn || null;
+            } else {
+                // If database is empty, save the default state to it
+                saveState();
             }
+            initializeAll();
         });
 
-        // --- Export & Import Logic ---
-        document.getElementById('exportBtn').addEventListener('click', () => {
-            const dataStr = JSON.stringify(state, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `lets_crack_it_backup_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        // --- Auth Logic ---
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginOverlay = document.getElementById('loginOverlay');
+        const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+        const loginCancelBtn = document.getElementById('loginCancelBtn');
+
+        loginBtn.addEventListener('click', () => loginOverlay.classList.add('active'));
+        loginCancelBtn.addEventListener('click', () => loginOverlay.classList.remove('active'));
+
+        loginSubmitBtn.addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => {
+                    loginOverlay.classList.remove('active');
+                    alert("Logged in successfully! Edit buttons are now visible.");
+                })
+                .catch((error) => {
+                    alert("Login failed! Check your email and password. Error: " + error.message);
+                });
         });
 
-        document.getElementById('importBtn').addEventListener('click', () => {
-            document.getElementById('importFile').click();
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                alert("Logged out. You are now in read-only mode.");
+            });
         });
 
-        document.getElementById('importFile').addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    state = { ...defaultState, ...importedData };
-                    saveState();
-                    initializeAll(); 
-                    alert("Data imported successfully!");
-                } catch (err) {
-                    alert("Error importing file. Make sure it's a valid backup file.");
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = ''; 
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.body.classList.remove('read-only');
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+            } else {
+                document.body.classList.add('read-only');
+                loginBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+            }
         });
 
         const levels = [
@@ -1198,9 +1266,19 @@
             renderHackathons();
         });
 
-        // --- Routine Logic ---
+        // --- Routine Logic (With Auto-Sort AM to PM) ---
         const routineList = document.getElementById('routineList');
+        const timeToMinutes = (t) => {
+            let [time, period] = t.toUpperCase().split(' ');
+            let [h, m] = time.split(':').map(Number);
+            if (period === 'PM' && h !== 12) h += 12;
+            if (period === 'AM' && h === 12) h = 0;
+            return (h * 60) + m;
+        };
+
         function renderRoutines() {
+            state.routines.sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
             routineList.innerHTML = '';
             state.routines.forEach((r, index) => {
                 const el = document.createElement('div');
@@ -1537,9 +1615,6 @@
             renderPastReviews();
             renderHistory();
         }
-
-        // --- Initial Render ---
-        initializeAll();
     </script>
 </body>
 </html>
