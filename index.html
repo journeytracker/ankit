@@ -297,6 +297,10 @@
         body.read-only textarea {
             pointer-events: none;
         }
+        /* FIX: Allow typing in the Login Box even in Read-Only mode */
+        body.read-only .login-box input {
+            pointer-events: all !important;
+        }
         body.read-only .review-textarea:placeholder-shown,
         body.read-only #historyTitleInput:placeholder-shown,
         body.read-only #historyContentInput:placeholder-shown {
