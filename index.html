@@ -266,10 +266,13 @@
         /* Login Modal */
         .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .login-overlay.active { opacity: 1; pointer-events: all; }
-        .login-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 24px; padding: 40px; width: 90%; max-width: 400px; box-shadow: var(--shadow-lg); }
+        .login-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 24px; padding: 40px; width: 90%; max-width: 400px; box-shadow: var(--shadow-lg); z-index: 2001; }
         .login-box h3 { font-family: 'Space Grotesk', sans-serif; font-size: 24px; margin-bottom: 20px; text-align: center; }
         .login-box input { width: 100%; margin-bottom: 16px; }
-        .login-box button { width: 100%; margin-bottom: 8px; }
+        .login-box button { width: 100%; margin-bottom: 8px; justify-content: center; }
+        .login-submit-btn { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 16px; border-radius: 14px; border: none; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.3s ease; font-family: inherit; box-shadow: 0 4px 20px rgba(99,102,241,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .login-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99,102,241,0.4); }
+        .login-submit-btn.success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 20px rgba(16,185,129,0.3); }
         
         /* Read-Only Mode Styling */
         body.read-only .header-actions,
@@ -297,9 +300,17 @@
         body.read-only textarea {
             pointer-events: none;
         }
-        /* FIX: Allow typing in the Login Box even in Read-Only mode */
-        body.read-only .login-box input {
+        /* Ensure Login box is ALWAYS interactive and visible */
+        body.read-only .login-box input,
+        body.read-only .login-box button,
+        body.read-only .login-box .action-btn,
+        body.read-only .login-box .login-submit-btn {
+            display: flex !important;
             pointer-events: all !important;
+            opacity: 1 !important;
+        }
+        body.read-only .login-box input {
+            display: block !important;
         }
         body.read-only .review-textarea:placeholder-shown,
         body.read-only #historyTitleInput:placeholder-shown,
@@ -370,8 +381,8 @@
             <h3>Admin Login</h3>
             <input type="email" class="todo-input" id="loginEmail" placeholder="Email">
             <input type="password" class="todo-input" id="loginPassword" placeholder="Password">
-            <button class="save-review-btn" id="loginSubmitBtn"><i class="fas fa-unlock"></i> Login</button>
-            <button class="action-btn" id="loginCancelBtn" style="width: 100%; justify-content: center;"><i class="fas fa-times"></i> Cancel</button>
+            <button class="login-submit-btn" id="loginSubmitBtn"><i class="fas fa-unlock"></i> Login</button>
+            <button class="action-btn" id="loginCancelBtn"><i class="fas fa-times"></i> Cancel</button>
         </div>
     </div>
 
@@ -856,12 +867,25 @@
         loginSubmitBtn.addEventListener('click', () => {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
+            
+            loginSubmitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Checking...`;
+            loginSubmitBtn.disabled = true;
+
             signInWithEmailAndPassword(auth, email, pass)
                 .then(() => {
-                    loginOverlay.classList.remove('active');
-                    alert("Logged in successfully! Edit buttons are now visible.");
+                    loginSubmitBtn.classList.add('success');
+                    loginSubmitBtn.innerHTML = `<i class="fas fa-check"></i> Success!`;
+                    setTimeout(() => {
+                        loginOverlay.classList.remove('active');
+                        loginSubmitBtn.classList.remove('success');
+                        loginSubmitBtn.innerHTML = `<i class="fas fa-unlock"></i> Login`;
+                        loginSubmitBtn.disabled = false;
+                        alert("Logged in successfully! Edit buttons are now visible.");
+                    }, 1200);
                 })
                 .catch((error) => {
+                    loginSubmitBtn.innerHTML = `<i class="fas fa-unlock"></i> Login`;
+                    loginSubmitBtn.disabled = false;
                     alert("Login failed! Check your email and password. Error: " + error.message);
                 });
         });
