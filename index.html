@@ -178,16 +178,21 @@
         .date-edit-group input { max-width: 60px; text-align: center; }
         .goal-delete-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; -webkit-tap-highlight-color: transparent; }
 
-        /* Routine */
-        .routine-list { display: grid; gap: 14px; }
-        .routine-day-header { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent-light); margin-top: 20px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
-        .routine-day-header:first-child { margin-top: 0; }
-        .routine-item { display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 20px; padding: 18px 22px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; border-left: 4px solid var(--primary); transition: all 0.3s ease; }
+        /* Routine (New Design) */
+        .routine-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+        .routine-tab { padding: 10px 18px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-secondary); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s ease; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+        .routine-tab:hover { border-color: var(--primary); color: var(--primary-light); }
+        .routine-tab.active { background: var(--gradient-1); border-color: transparent; color: white; box-shadow: 0 4px 15px rgba(99,102,241,0.3); }
+        .routine-day-content { display: none; animation: fadeIn 0.4s ease; }
+        .routine-day-content.active { display: block; }
+        .routine-day-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .routine-day-subtitle { font-size: 14px; color: var(--accent-light); margin-bottom: 20px; padding: 12px 16px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 12px; line-height: 1.5; }
+        .routine-day-subtitle:empty { display: none; }
+        .routine-list { display: grid; gap: 12px; }
+        .routine-item { display: grid; grid-template-columns: 220px 1fr; align-items: center; gap: 20px; padding: 16px 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; border-left: 4px solid var(--primary); transition: all 0.3s ease; }
         .routine-item:hover { background: rgba(255,255,255,0.04); border-left-color: var(--primary-light); }
-        .routine-time { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: var(--primary-light); }
-        .routine-task { font-size: 14px; color: var(--text-secondary); }
-        .routine-remove { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; -webkit-tap-highlight-color: transparent; }
-        .routine-remove:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.1); }
+        .routine-time { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: var(--primary-light); }
+        .routine-task { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
 
         /* Hackathons */
         .hackathon-card { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 12px; transition: all 0.3s ease; flex-wrap: wrap; gap: 16px; }
@@ -265,7 +270,7 @@
         .add-goal-btn { background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color); color: var(--text-muted); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 12px; font-size: 13px; transition: all 0.3s ease; font-family: inherit; -webkit-tap-highlight-color: transparent; }
         .add-goal-btn:hover { border-color: var(--primary); color: var(--primary-light); }
 
-        /* Login Modals - FIXED display logic */
+        /* Login Modals */
         .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: none; }
         .login-overlay.active { opacity: 1 !important; pointer-events: all !important; display: flex !important; }
         .login-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 24px; padding: 40px; width: 90%; max-width: 400px; box-shadow: var(--shadow-lg); z-index: 2001; }
@@ -331,8 +336,7 @@
         @media (max-width: 768px) {
             .nav-stats { display: none; }
             .main-container { padding: 100px 1rem 2rem; }
-            .routine-item { grid-template-columns: 1fr; gap: 10px; }
-            .routine-remove { justify-self: start; }
+            .routine-item { grid-template-columns: 1fr; gap: 6px; }
             .stat-grid-3 { grid-template-columns: 1fr; }
             .history-title { margin-left: 0; margin-top: 30px; }
         }
@@ -559,9 +563,9 @@
                 <div class="card span-2">
                     <div class="card-header">
                         <div class="card-title"><div class="card-icon"><i class="fas fa-calendar-week"></i></div> Daily Routine</div>
-                        <button class="add-task-btn" style="padding: 8px 16px; font-size: 13px;" id="addRoutineBtn"><i class="fas fa-plus"></i> Add Slot</button>
                     </div>
-                    <div class="routine-list" id="routineList"></div>
+                    <div class="routine-tabs" id="routineTabs"></div>
+                    <div id="routineContent"></div>
                 </div>
             </div>
         </section>
@@ -720,10 +724,92 @@
                 { name: "HackTheNorth", date: "2025-09-20", status: "upcoming" }
             ],
             routines: [
-                { day: "Everyday", time: "06:00 AM", task: "Morning Workout & Meditation" },
-                { day: "Everyday", time: "08:00 AM", task: "Breakfast & College Prep" },
-                { day: "Monday", time: "09:00 AM", task: "College Lectures & Labs" },
-                { day: "Wednesday", time: "02:00 PM", task: "Self Study (Core Subjects)" }
+                {
+                    tabName: "Everyday",
+                    title: "🌅 The Morning Routine (Same Every Day)",
+                    subtitle: "",
+                    schedule: [
+                        { time: "05:00 AM - 06:00 AM", task: "Wake up, freshen up, take a bath, and get ready." },
+                        { time: "06:00 AM - 08:00 AM (2 hours)", task: "Supreme 4.0 (C++ Learning)" },
+                        { time: "08:00 AM - 09:30 AM", task: "Breakfast, relax a bit, and get your bag ready for college." }
+                    ]
+                },
+                {
+                    tabName: "Mon & Wed",
+                    title: "📅 Monday & Wednesday",
+                    subtitle: "Long Days: 11 AM - 6 PM. These are your survival days. You just need to get through college and do a little work at night.",
+                    schedule: [
+                        { time: "09:30 AM - 11:00 AM", task: "Travel to MITS / relax / listen to music." },
+                        { time: "11:00 AM - 06:00 PM", task: "College Lectures & Labs. (Use your lunch break to eat and rest your brain)." },
+                        { time: "06:00 PM - 07:00 PM", task: "Travel back to your room. Unwind. Don't look at code right now." },
+                        { time: "07:00 PM - 08:00 PM", task: "Dinner & Chill." },
+                        { time: "08:00 PM - 09:30 PM (1.5 hours)", task: "College Work / Assignments. Finish whatever homework or practical files are due tomorrow." },
+                        { time: "09:30 PM - 11:00 PM (1.5 hours)", task: "Coding Practice / Project Work. Type out the C++ code you learned in the morning. If you have energy, work on our 'Smart Presentation Remote' website." },
+                        { time: "11:00 PM", task: "Sleep." }
+                    ]
+                },
+                {
+                    tabName: "Tue & Fri",
+                    title: "📅 Tuesday & Friday",
+                    subtitle: "Short Days: 10 AM - 1 PM. These are your Golden Days. You get back early, so this is where the magic happens.",
+                    schedule: [
+                        { time: "09:30 AM - 10:00 AM", task: "Travel to college." },
+                        { time: "10:00 AM - 01:00 PM", task: "College." },
+                        { time: "01:00 PM - 02:30 PM", task: "Travel back, lunch, and take a power nap if you want." },
+                        { time: "02:30 PM - 05:00 PM (2.5 hours)", task: "THE PROJECT ZONE. This is your dedicated time to build the Smart Presentation Remote with me. We will write code, test websites, and plan the hardware." },
+                        { time: "05:00 PM - 07:00 PM", task: "Free time! Play video games, watch anime, or play chess. You earned it." },
+                        { time: "07:00 PM - 08:00 PM", task: "Dinner." },
+                        { time: "08:00 PM - 10:00 PM (2 hours)", task: "C++ Code Practice & College Work." },
+                        { time: "10:00 PM - 11:00 PM", task: "Wind down, pack your bag, relax." }
+                    ]
+                },
+                {
+                    tabName: "Thursday",
+                    title: "📅 Thursday",
+                    subtitle: "Medium Day: 11 AM - 5 PM",
+                    schedule: [
+                        { time: "09:30 AM - 11:00 AM", task: "Travel / Relax." },
+                        { time: "11:00 AM - 05:00 PM", task: "College." },
+                        { time: "05:00 PM - 07:00 PM", task: "Travel back, unwind, finish college assignments." },
+                        { time: "07:00 PM - 08:00 PM", task: "Dinner." },
+                        { time: "08:00 PM - 10:00 PM (2 hours)", task: "Coding Practice / Project Work." },
+                        { time: "10:00 PM - 11:00 PM", task: "Free time / Anime / Chill." }
+                    ]
+                },
+                {
+                    tabName: "Saturday",
+                    title: "📅 Saturday",
+                    subtitle: "The 'Deep Work' Day. Since there are no college classes, this is the day you build the future. This is your Iron Man workshop day.",
+                    schedule: [
+                        { time: "05:00 AM - 06:00 AM", task: "Wake up, freshen up, take a bath." },
+                        { time: "06:00 AM - 08:30 AM (2.5 hours)", task: "Supreme 4.0 (C++ Heavy Lifting). Since you have more time, use Saturdays to clear backlogs, revise tough concepts from Love Babbar's lectures, and solve extra coding problems." },
+                        { time: "08:30 AM - 09:30 AM", task: "Breakfast and relax." },
+                        { time: "09:30 AM - 01:00 PM (3.5 hours)", task: "THE PROJECT ZONE. This is your dedicated time to work on the Smart Presentation Remote. We will write code, test the ESP32, and build the website. 3.5 hours of uninterrupted project time every Saturday means you will make massive progress." },
+                        { time: "01:00 PM - 02:30 PM", task: "Lunch and a power nap." },
+                        { time: "02:30 PM - 05:00 PM (2.5 hours)", task: "College Backlog. Finish any practical files, assignments, or pending work for Monday and Tuesday. Get it all out of the way now so Sunday is free." },
+                        { time: "05:00 PM - 07:00 PM", task: "Free Time! Play video games, watch anime, or play chess. You earned a break." },
+                        { time: "07:00 PM - 08:00 PM", task: "Dinner." },
+                        { time: "08:00 PM - 10:00 PM", task: "Light coding practice or just chill out." },
+                        { time: "10:00 PM - 11:00 PM", task: "Wind down and sleep." }
+                    ]
+                },
+                {
+                    tabName: "Sunday",
+                    title: "📅 Sunday",
+                    subtitle: "The 'Recharge & Reset' Day. Sunday is about resting your brain and preparing for the week ahead. No heavy new learning today.",
+                    schedule: [
+                        { time: "05:00 AM - 06:00 AM", task: "Wake up, bath, etc." },
+                        { time: "06:00 AM - 08:00 AM (2 hours)", task: "C++ Revision Only. Do NOT learn a new topic today. Just review what you learned from Monday to Saturday. Look at your notes, make sure you understand everything." },
+                        { time: "08:00 AM - 10:30 AM", task: "Long breakfast, watch an anime episode, relax." },
+                        { time: "10:30 AM - 01:00 PM", task: "Plan the Week. Pack your bag, check your college timetable for Monday, and organize your desk. Make a small list of what C++ topics you will cover next week." },
+                        { time: "01:00 PM - 02:30 PM", task: "Lunch and nap." },
+                        { time: "02:30 PM - 05:00 PM", task: "Completely Free. Go out, watch a movie, play chess online, do whatever makes you happy. No coding, no college work." },
+                        { time: "05:00 PM - 07:00 PM", task: "Free time / Hobbies." },
+                        { time: "07:00 PM - 08:00 PM", task: "Dinner." },
+                        { time: "08:00 PM - 10:00 PM", task: "Free time." },
+                        { time: "10:00 PM - 11:00 PM", task: "Sleep early and get ready to crush Monday." }
+                    ]
+                }
             ],
             roadmap: [
                 {
@@ -842,7 +928,13 @@
                 state.todayTasks = Array.isArray(state.todayTasks) ? state.todayTasks : [];
                 state.upcomingGoals = Array.isArray(state.upcomingGoals) ? state.upcomingGoals : defaultState.upcomingGoals;
                 state.hackathons = Array.isArray(state.hackathons) ? state.hackathons : defaultState.hackathons;
+                
+                // Data Migration Check for Routines (to prevent crashes from old format)
                 state.routines = Array.isArray(state.routines) ? state.routines : defaultState.routines;
+                if (state.routines.length > 0 && !state.routines[0].schedule) {
+                    state.routines = defaultState.routines; // Force update to new timetable format
+                }
+                
                 state.roadmap = Array.isArray(state.roadmap) ? state.roadmap : defaultState.roadmap;
                 state.pastReviews = Array.isArray(state.pastReviews) ? state.pastReviews : [];
                 state.history = Array.isArray(state.history) ? state.history : [];
@@ -852,7 +944,6 @@
                 state.streak = typeof state.streak === 'number' ? state.streak : 0;
                 state.lastCheckIn = state.lastCheckIn || null;
             } else {
-                // If database is empty, save the default state to it
                 saveState();
             }
             initializeAll();
@@ -1066,7 +1157,6 @@
             tab.addEventListener('click', () => {
                 const targetTab = tab.dataset.tab;
                 
-                // Password protection for History and Roadmap (bypass if Admin)
                 if ((targetTab === 'history' || targetTab === 'roadmap') && !auth.currentUser) {
                     if (sessionStorage.getItem('pagePassUnlocked') !== 'true') {
                         requestPagePass(tab);
@@ -1354,66 +1444,48 @@
             renderHackathons();
         });
 
-        // --- Routine Logic (With Weekdays & Auto-Sort AM to PM) ---
-        const routineList = document.getElementById('routineList');
-        const timeToMinutes = (t) => {
-            let [time, period] = t.toUpperCase().split(' ');
-            let [h, m] = time.split(':').map(Number);
-            if (period === 'PM' && h !== 12) h += 12;
-            if (period === 'AM' && h === 12) h = 0;
-            return (h * 60) + m;
-        };
+        // --- Routine Logic (Interactive Day Tabs) ---
+        const routineTabs = document.getElementById('routineTabs');
+        const routineContent = document.getElementById('routineContent');
 
         function renderRoutines() {
-            const daysOrder = ["Everyday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            state.routines.sort((a, b) => {
-                const dayA = a.day || "Everyday";
-                const dayB = b.day || "Everyday";
-                const dayDiff = daysOrder.indexOf(dayA) - daysOrder.indexOf(dayB);
-                if (dayDiff !== 0) return dayDiff;
-                return timeToMinutes(a.time) - timeToMinutes(b.time);
-            });
+            routineTabs.innerHTML = '';
+            routineContent.innerHTML = '';
+            
+            state.routines.forEach((dayData, index) => {
+                const tabBtn = document.createElement('button');
+                tabBtn.className = 'routine-tab' + (index === 0 ? ' active' : '');
+                tabBtn.textContent = dayData.tabName;
+                tabBtn.addEventListener('click', () => {
+                    document.querySelectorAll('.routine-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.routine-day-content').forEach(c => c.classList.remove('active'));
+                    tabBtn.classList.add('active');
+                    document.getElementById(`routine-day-${index}`).classList.add('active');
+                });
+                routineTabs.appendChild(tabBtn);
 
-            routineList.innerHTML = '';
-            let currentDay = "";
-            state.routines.forEach((r, index) => {
-                const day = r.day || "Everyday";
-                if (day !== currentDay) {
-                    currentDay = day;
-                    const dayHeader = document.createElement('div');
-                    dayHeader.className = 'routine-day-header';
-                    dayHeader.innerHTML = `<i class="fas fa-calendar-day"></i> ${day}`;
-                    routineList.appendChild(dayHeader);
-                }
-                const el = document.createElement('div');
-                el.className = 'routine-item';
-                el.innerHTML = `
-                    <div class="routine-time">${r.time}</div>
-                    <div class="routine-task">${r.task}</div>
-                    <button class="routine-remove" onclick="removeRoutine(${index})">Remove</button>
+                const dayContent = document.createElement('div');
+                dayContent.className = 'routine-day-content' + (index === 0 ? ' active' : '');
+                dayContent.id = `routine-day-${index}`;
+                
+                let scheduleHTML = '';
+                dayData.schedule.forEach(item => {
+                    scheduleHTML += `
+                        <div class="routine-item">
+                            <div class="routine-time">${item.time}</div>
+                            <div class="routine-task">${item.task}</div>
+                        </div>
+                    `;
+                });
+
+                dayContent.innerHTML = `
+                    <h3 class="routine-day-title">${dayData.title}</h3>
+                    <div class="routine-day-subtitle">${dayData.subtitle || ''}</div>
+                    <div class="routine-list">${scheduleHTML}</div>
                 `;
-                routineList.appendChild(el);
+                routineContent.appendChild(dayContent);
             });
         }
-
-        window.removeRoutine = (index) => {
-            state.routines.splice(index, 1);
-            saveState();
-            renderRoutines();
-        };
-
-        document.getElementById('addRoutineBtn').addEventListener('click', () => {
-            let day = prompt("Enter day (e.g., Monday, Everyday):", "Everyday");
-            if (!day) return;
-            let time = prompt("Enter time (e.g., 11:00 AM):", "08:00 AM");
-            if (!time) return;
-            let task = prompt("Enter routine task:", "Study DSA");
-            if (task) {
-                state.routines.push({ day, time, task });
-                saveState();
-                renderRoutines();
-            }
-        });
 
         // --- Roadmap Logic (With Months & Edit Mode Toggle) ---
         const timeline = document.getElementById('timeline');
