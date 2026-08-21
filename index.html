@@ -178,7 +178,7 @@
         .date-edit-group input { max-width: 60px; text-align: center; }
         .goal-delete-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; -webkit-tap-highlight-color: transparent; }
 
-        /* Routine (New Design) */
+        /* Routine */
         .routine-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
         .routine-tab { padding: 10px 18px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-secondary); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s ease; font-family: inherit; -webkit-tap-highlight-color: transparent; }
         .routine-tab:hover { border-color: var(--primary); color: var(--primary-light); }
@@ -193,6 +193,11 @@
         .routine-item:hover { background: rgba(255,255,255,0.04); border-left-color: var(--primary-light); }
         .routine-time { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; color: var(--primary-light); }
         .routine-task { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+        .routine-item-edit { display: grid; grid-template-columns: 220px 1fr auto; gap: 10px; align-items: center; padding: 12px 16px; background: rgba(99,102,241,0.05); border: 1px solid var(--primary); border-radius: 12px; }
+        .routine-time-input, .routine-task-input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; outline: none; width: 100%; }
+        .routine-time-input { font-size: 13px; font-weight: 600; color: var(--primary-light); }
+        .routine-task-input { font-size: 14px; color: var(--text-secondary); }
+        .routine-delete-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
 
         /* Hackathons */
         .hackathon-card { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 12px; transition: all 0.3s ease; flex-wrap: wrap; gap: 16px; }
@@ -294,7 +299,8 @@
         body.read-only .milestone-delete,
         body.read-only .goal-delete-btn,
         body.read-only #addHistoryBtn,
-        body.read-only #editRoadmapBtn {
+        body.read-only #editRoadmapBtn,
+        body.read-only #editRoutineBtn {
             display: none !important; 
         }
         body.read-only #revEasy,
@@ -337,6 +343,7 @@
             .nav-stats { display: none; }
             .main-container { padding: 100px 1rem 2rem; }
             .routine-item { grid-template-columns: 1fr; gap: 6px; }
+            .routine-item-edit { grid-template-columns: 1fr; gap: 8px; }
             .stat-grid-3 { grid-template-columns: 1fr; }
             .history-title { margin-left: 0; margin-top: 30px; }
         }
@@ -563,6 +570,7 @@
                 <div class="card span-2">
                     <div class="card-header">
                         <div class="card-title"><div class="card-icon"><i class="fas fa-calendar-week"></i></div> Daily Routine</div>
+                        <button class="action-btn" id="editRoutineBtn"><i class="fas fa-edit"></i> Edit Routine</button>
                     </div>
                     <div class="routine-tabs" id="routineTabs"></div>
                     <div id="routineContent"></div>
@@ -920,7 +928,6 @@
         onSnapshot(stateDocRef, (docSnap) => {
             if (docSnap.exists()) {
                 state = docSnap.data();
-                // Merge any missing defaults
                 state = { ...defaultState, ...state };
                 state.quotes = defaultState.quotes; 
                 state.tags = Array.isArray(state.tags) ? state.tags : defaultState.tags;
@@ -929,10 +936,9 @@
                 state.upcomingGoals = Array.isArray(state.upcomingGoals) ? state.upcomingGoals : defaultState.upcomingGoals;
                 state.hackathons = Array.isArray(state.hackathons) ? state.hackathons : defaultState.hackathons;
                 
-                // Data Migration Check for Routines (to prevent crashes from old format)
                 state.routines = Array.isArray(state.routines) ? state.routines : defaultState.routines;
                 if (state.routines.length > 0 && !state.routines[0].schedule) {
-                    state.routines = defaultState.routines; // Force update to new timetable format
+                    state.routines = defaultState.routines; 
                 }
                 
                 state.roadmap = Array.isArray(state.roadmap) ? state.roadmap : defaultState.roadmap;
@@ -1419,7 +1425,7 @@
                     </div>
                     <div style="display:flex; align-items:center; gap: 12px;">
                         <span class="status-badge ${statusClass}">${h.status}</span>
-                        <button class="routine-remove" onclick="removeHackathon(${index})">Remove</button>
+                        <button class="action-btn danger" onclick="removeHackathon(${index})"><i class="fas fa-trash"></i> Remove</button>
                     </div>
                 `;
                 hackathonList.appendChild(el);
@@ -1444,9 +1450,23 @@
             renderHackathons();
         });
 
-        // --- Routine Logic (Interactive Day Tabs) ---
+        // --- Routine Logic (Interactive Day Tabs with Edit Mode) ---
         const routineTabs = document.getElementById('routineTabs');
         const routineContent = document.getElementById('routineContent');
+        const editRoutineBtn = document.getElementById('editRoutineBtn');
+        let routineEditMode = false;
+        let activeRoutineTab = 0;
+
+        editRoutineBtn.addEventListener('click', () => {
+            routineEditMode = !routineEditMode;
+            editRoutineBtn.classList.toggle('active');
+            if (routineEditMode) {
+                editRoutineBtn.innerHTML = `<i class="fas fa-save"></i> Done Editing`;
+            } else {
+                editRoutineBtn.innerHTML = `<i class="fas fa-edit"></i> Edit Routine`;
+            }
+            renderRoutines();
+        });
 
         function renderRoutines() {
             routineTabs.innerHTML = '';
@@ -1454,38 +1474,66 @@
             
             state.routines.forEach((dayData, index) => {
                 const tabBtn = document.createElement('button');
-                tabBtn.className = 'routine-tab' + (index === 0 ? ' active' : '');
+                tabBtn.className = 'routine-tab' + (index === activeRoutineTab ? ' active' : '');
                 tabBtn.textContent = dayData.tabName;
                 tabBtn.addEventListener('click', () => {
-                    document.querySelectorAll('.routine-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.routine-day-content').forEach(c => c.classList.remove('active'));
-                    tabBtn.classList.add('active');
-                    document.getElementById(`routine-day-${index}`).classList.add('active');
+                    activeRoutineTab = index;
+                    renderRoutines();
                 });
                 routineTabs.appendChild(tabBtn);
 
                 const dayContent = document.createElement('div');
-                dayContent.className = 'routine-day-content' + (index === 0 ? ' active' : '');
+                dayContent.className = 'routine-day-content' + (index === activeRoutineTab ? ' active' : '');
                 dayContent.id = `routine-day-${index}`;
                 
                 let scheduleHTML = '';
-                dayData.schedule.forEach(item => {
-                    scheduleHTML += `
-                        <div class="routine-item">
-                            <div class="routine-time">${item.time}</div>
-                            <div class="routine-task">${item.task}</div>
-                        </div>
-                    `;
+                dayData.schedule.forEach((item, itemIndex) => {
+                    if (routineEditMode) {
+                        scheduleHTML += `
+                            <div class="routine-item-edit">
+                                <input type="text" class="routine-time-input" value="${item.time}" onchange="updateRoutineItem(${index}, ${itemIndex}, 'time', this.value)">
+                                <input type="text" class="routine-task-input" value="${item.task}" onchange="updateRoutineItem(${index}, ${itemIndex}, 'task', this.value)">
+                                <button class="routine-delete-btn" onclick="deleteRoutineItem(${index}, ${itemIndex})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        `;
+                    } else {
+                        scheduleHTML += `
+                            <div class="routine-item">
+                                <div class="routine-time">${item.time}</div>
+                                <div class="routine-task">${item.task}</div>
+                            </div>
+                        `;
+                    }
                 });
+
+                let addSlotHTML = routineEditMode ? `<button class="add-goal-btn" onclick="addRoutineItem(${index})" style="margin-top: 15px;"><i class="fas fa-plus"></i> Add Slot</button>` : '';
 
                 dayContent.innerHTML = `
                     <h3 class="routine-day-title">${dayData.title}</h3>
                     <div class="routine-day-subtitle">${dayData.subtitle || ''}</div>
                     <div class="routine-list">${scheduleHTML}</div>
+                    ${addSlotHTML}
                 `;
                 routineContent.appendChild(dayContent);
             });
         }
+
+        window.updateRoutineItem = (dayIdx, itemIdx, field, val) => {
+            state.routines[dayIdx].schedule[itemIdx][field] = val;
+            saveState();
+        };
+
+        window.deleteRoutineItem = (dayIdx, itemIdx) => {
+            state.routines[dayIdx].schedule.splice(itemIdx, 1);
+            saveState();
+            renderRoutines();
+        };
+
+        window.addRoutineItem = (dayIdx) => {
+            state.routines[dayIdx].schedule.push({ time: "00:00 AM - 00:00 AM", task: "New Task" });
+            saveState();
+            renderRoutines();
+        };
 
         // --- Roadmap Logic (With Months & Edit Mode Toggle) ---
         const timeline = document.getElementById('timeline');
